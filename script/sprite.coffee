@@ -19,8 +19,8 @@ class Sprite
   addImage: (name, index) ->
     @assets[name] = new Shape this, index
     
-  addAnimation: ->
-    # todo: implement this
+  addAnimation: (name, params) ->
+    @assets[name] = new Animation this, params
     
   render: (name, ctx) ->
     @assets[name].render(ctx)
@@ -35,7 +35,39 @@ class Shape
     ctx.drawImage( @sprite.texture, @sx, @sy, @sprite.width, @sprite.height, 0, 0, @sprite.width, @sprite.height )
 
 class Animation 
-  constructor: (sprite) ->
+  constructor: (sprite, params) ->
+    @sprite = sprite
+    @fps = params["fps"] ? 30
+    @loop = params["loop"] ? true
+    @callback = params["callback"] ? null
+    @frames = for index in params["frames"] 
+      do (index) =>
+        new Shape @sprite, index
+    @lastFrame = @frames.length - 1
+    @timer = new Timer
+    @currentFrame = 0
+    @playing = true
     
   render: (ctx) ->
-    ctx.drawImage( @texture, @assets[name].sx, @assets[name].sy, @width, @height, 0, 0, @width, @height )
+    if @playing
+      @currentFrame = Math.floor( @timer.timeSinceLastPunch() / (1000 / @fps) )
+      if @currentFrame > @lastFrame
+        @callback()
+        if @loop
+          @rewind()
+        else
+          @currentFrame = @lastFrame
+          @stop()
+        
+    @frames[@currentFrame].render(ctx)
+    
+  play: ->
+    @playing = true
+    
+  stop: ->
+    @playing = false
+    
+  rewind: ->
+    @currentFrame = 0
+    @timer.punch()
+    

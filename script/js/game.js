@@ -85,7 +85,12 @@
     function Spaceship() {
       this.state = "normal";
       this.sprite = new Sprite("assets/images/test.png", 50, 50);
-      this.sprite.addImage("normal", Math.floor(Math.random() * 10));
+      this.sprite.addAnimation("normal", {
+        frames: [0, 1, 2, 3, 4],
+        fps: 10,
+        loop: true,
+        callback: this.hello
+      });
       this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
       this.speed = new Vector(0.1, 0.1);
       if (Math.random() > 0.5) {
@@ -107,6 +112,9 @@
       this.sprite.render(this.state, ctx);
       return ctx.restore();
     };
+    Spaceship.prototype.hello = function() {
+      return console.log("hello!!");
+    };
     return Spaceship;
   })();
   Sprite = (function() {
@@ -121,7 +129,9 @@
     Sprite.prototype.addImage = function(name, index) {
       return this.assets[name] = new Shape(this, index);
     };
-    Sprite.prototype.addAnimation = function() {};
+    Sprite.prototype.addAnimation = function(name, params) {
+      return this.assets[name] = new Animation(this, params);
+    };
     Sprite.prototype.render = function(name, ctx) {
       return this.assets[name].render(ctx);
     };
@@ -139,9 +149,53 @@
     return Shape;
   })();
   Animation = (function() {
-    function Animation(sprite) {}
+    function Animation(sprite, params) {
+      var index, _ref, _ref2, _ref3;
+      this.sprite = sprite;
+      this.fps = (_ref = params["fps"]) != null ? _ref : 30;
+      this.loop = (_ref2 = params["loop"]) != null ? _ref2 : true;
+      this.callback = (_ref3 = params["callback"]) != null ? _ref3 : null;
+      this.frames = (function() {
+        var _i, _len, _ref4, _results;
+        _ref4 = params["frames"];
+        _results = [];
+        for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+          index = _ref4[_i];
+          _results.push(__bind(function(index) {
+            return new Shape(this.sprite, index);
+          }, this)(index));
+        }
+        return _results;
+      }).call(this);
+      this.lastFrame = this.frames.length - 1;
+      this.timer = new Timer;
+      this.currentFrame = 0;
+      this.playing = true;
+    }
     Animation.prototype.render = function(ctx) {
-      return ctx.drawImage(this.texture, this.assets[name].sx, this.assets[name].sy, this.width, this.height, 0, 0, this.width, this.height);
+      if (this.playing) {
+        this.currentFrame = Math.floor(this.timer.timeSinceLastPunch() / (1000 / this.fps));
+        if (this.currentFrame > this.lastFrame) {
+          this.callback();
+          if (this.loop) {
+            this.rewind();
+          } else {
+            this.currentFrame = this.lastFrame;
+            this.stop();
+          }
+        }
+      }
+      return this.frames[this.currentFrame].render(ctx);
+    };
+    Animation.prototype.play = function() {
+      return this.playing = true;
+    };
+    Animation.prototype.stop = function() {
+      return this.playing = false;
+    };
+    Animation.prototype.rewind = function() {
+      this.currentFrame = 0;
+      return this.timer.punch();
     };
     return Animation;
   })();
@@ -159,7 +213,7 @@
       _fn = __bind(function(i) {
         return this.spaceships[i] = new Spaceship;
       }, this);
-      for (i = 0; i <= 200; i++) {
+      for (i = 0; i <= 3; i++) {
         _fn(i);
       }
     }
@@ -221,13 +275,19 @@
   Timer = (function() {
     function Timer() {
       this.last_time = new Date().getTime();
-      this.delta = 1000;
+      this.delta = 0;
     }
     Timer.prototype.punch = function() {
       var this_time;
       this_time = new Date().getTime();
       this.delta = this_time - this.last_time;
-      return this.last_time = this_time;
+      this.last_time = this_time;
+      return this.delta;
+    };
+    Timer.prototype.timeSinceLastPunch = function() {
+      var this_time;
+      this_time = new Date().getTime();
+      return this_time - this.last_time;
     };
     Timer.prototype.fps = function() {
       return 1000 / this.delta;

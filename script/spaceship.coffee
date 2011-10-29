@@ -5,8 +5,8 @@ class Spaceship
   constructor: ->
     @state = "normal"
     @sprite = new Sprite( "assets/images/test.png", 50, 50 )
-    @sprite.addImage "normal", Math.floor Math.random() * 10
-    # @sprite.addAnimation "explode", { frames: [1,2,3,4,5], loop: false }
+    # @sprite.addImage "normal", Math.floor Math.random() * 10
+    @sprite.addAnimation "normal", { frames: [0,1,2,3,4], fps: 10, loop: true, callback: @hello }
     @coor = new Vector( Math.random() * 1024, Math.random() * 768 )
     @speed = new Vector( 0.1, 0.1 )
     if Math.random() > 0.5
@@ -25,3 +25,6 @@ class Spaceship
     ctx.translate @coor.x, @coor.y
     @sprite.render( @state, ctx )
     ctx.restore()
+    
+  hello: ->
+    console.log "hello!!"
