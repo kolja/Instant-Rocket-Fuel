@@ -2,7 +2,7 @@
 class StateIntro extends State
   constructor: ->
     @spaceships = []
-    for i in [0..3]
+    for i in [0..50]
       do (i) =>
         @spaceships[i] = new Spaceship
     

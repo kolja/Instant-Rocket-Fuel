@@ -8,6 +8,11 @@
     child.__super__ = parent.prototype;
     return child;
   };
+  Array.prototype.shuffle = function() {
+    return this.sort(function() {
+      return 0.5 - Math.random();
+    });
+  };
   Game = (function() {
     function Game(width, height) {
       var canvas;
@@ -86,9 +91,9 @@
       this.state = "normal";
       this.sprite = new Sprite("assets/images/test.png", 50, 50);
       this.sprite.addAnimation("normal", {
-        frames: [0, 1, 2, 3, 4],
-        fps: 1,
-        loop: false,
+        frames: [0, 1, 2, 3, 4].shuffle(),
+        fps: 3,
+        loop: true,
         callback: this.hello
       });
       this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
@@ -99,11 +104,21 @@
     }
     Spaceship.prototype.update = function(delta) {
       this.coor = this.coor.add(this.speed.mult(delta));
-      if (this.coor.x > 1024 || this.coor.x < 0) {
+      if (this.coor.x > 1024) {
         this.speed.x = this.speed.x * -1;
+        this.coor.x = 1024;
       }
-      if (this.coor.y > 768 || this.coor.y < 0) {
-        return this.speed.y = this.speed.y * -1;
+      if (this.coor.x < 0) {
+        this.speed.x = this.speed.x * -1;
+        this.coor.x = 0;
+      }
+      if (this.coor.y > 768) {
+        this.speed.y = this.speed.y * -1;
+        this.coor.y = 768;
+      }
+      if (this.coor.y < 0) {
+        this.speed.y = this.speed.y * -1;
+        return this.coor.y = 0;
       }
     };
     Spaceship.prototype.render = function(ctx) {
@@ -113,7 +128,7 @@
       return ctx.restore();
     };
     Spaceship.prototype.hello = function() {
-      return console.log("Hallo Axel!!");
+      return console.log("hello!");
     };
     return Spaceship;
   })();
@@ -213,7 +228,7 @@
       _fn = __bind(function(i) {
         return this.spaceships[i] = new Spaceship;
       }, this);
-      for (i = 0; i <= 3; i++) {
+      for (i = 0; i <= 50; i++) {
         _fn(i);
       }
     }
