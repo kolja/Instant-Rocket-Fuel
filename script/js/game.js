@@ -87,8 +87,8 @@
       this.sprite = new Sprite("assets/images/test.png", 50, 50);
       this.sprite.addAnimation("normal", {
         frames: [0, 1, 2, 3, 4],
-        fps: 10,
-        loop: true,
+        fps: 1,
+        loop: false,
         callback: this.hello
       });
       this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
@@ -113,7 +113,7 @@
       return ctx.restore();
     };
     Spaceship.prototype.hello = function() {
-      return console.log("hello!!");
+      return console.log("Hallo Axel!!");
     };
     return Spaceship;
   })();
@@ -352,7 +352,7 @@
       return this;
     };
     Vector.prototype.projectTo = function(vec) {
-      return vec.mult(this.scalarProduct(vec) / Math.pow(vec.length(), 2));
+      return vec.mult(this.scalarProduct(vec) / vec.lengthSquared());
     };
     Vector.intersecting = function(oa, a, ob, b) {
       var c, col, l, m, mu, mult, n;

@@ -24,4 +24,3 @@ class Game
 
   render: ->
     @ctx.fillText( @timer.fps().toFixed(1), 960, 20 )
-
