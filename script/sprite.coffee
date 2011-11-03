@@ -10,10 +10,9 @@
 #
 
 class Sprite
-  constructor: ( file, @width, @height ) ->
+  constructor: ( file, @width, @height, @texWidth ) ->
     @texture = new Image()
     @texture.src = file
-    @texWidth = 250
     @assets = {}
     
   addImage: (name, index) ->

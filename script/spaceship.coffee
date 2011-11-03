@@ -4,7 +4,7 @@ class Spaceship
 
   constructor: ->
     @state = "normal"
-    @sprite = new Sprite( "assets/images/test.png", 50, 50 )
+    @sprite = new Sprite( "assets/images/test.png", 50, 50, 250 )
     # @sprite.addImage "normal", Math.floor Math.random() * 10
     @sprite.addAnimation "normal", { frames: [0,1,2,3,4].shuffle(), fps: 3, loop: true, callback: @hello }
     @coor = new Vector( Math.random() * 1024, Math.random() * 768 )

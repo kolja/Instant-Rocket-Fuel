@@ -7,6 +7,7 @@ class Asteroids extends Game
   
   constructor: (width, height) ->
     super width, height
+    
     @stateManager = new Statemanager
     for state in ["intro", "main"]  # Add your own Gamestates or Levels
       @stateManager.addState state

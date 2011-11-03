@@ -1,8 +1,11 @@
 
 class StateIntro extends State
   constructor: ->
+    
+    @map = new Map "assets/map.png"
+    
     @spaceships = []
-    for i in [0..50]
+    for i in [0..3]
       do (i) =>
         @spaceships[i] = new Spaceship
     
@@ -12,6 +15,7 @@ class StateIntro extends State
         spaceship.update delta
     
   render: (ctx) ->
+    @map.render(ctx)
     for spaceship in @spaceships
       do (spaceship) =>
         spaceship.render ctx

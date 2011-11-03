@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Game, Shape, Spaceship, Sprite, State, StateIntro, StateMain, Statemanager, Timer, Vector;
+  var Animation, Asteroids, Game, Map, Shape, Spaceship, Sprite, State, StateIntro, StateMain, Statemanager, Tile, Timer, Vector, root;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -8,6 +8,8 @@
     child.__super__ = parent.prototype;
     return child;
   };
+  this.mapdata = [['#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['#', '#', '#', '.', '.', '#', '#', '#', '#', '#', '.', '#', '#', '.', '.', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['#', '#', '.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '#', '#', '.', '.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['#', '.', '.', '#', '.', '#', '#', '#', '#', '.', '#', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['.', '.', '.', '.', '.', '#', '.', '#', '#', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '#', '#', '#', '.', '#', '.', '#', '#', '#'], ['#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '#', '#', '.', '.', '.', '#', '#', '#', '#'], ['.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '#', '#', '#', '.', '.', '.', '#', '#', '#', '.', '.', '#', '.', '#', '#'], ['#', '#', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '#', '.', '.', '.', '#', '#', '#', '.', '.', '.', '#', '#', '#'], ['#', '#', '#', '#', '.', '#', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '#', '#', '#', '.', '.', '.', '#', '#', '#'], ['#', '#', '#', '#', '.', '#', '#', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '#', '#', '#', '.', '.', '.', '#', '#', '#'], ['.', '#', '#', '#', '.', '.', '#', '#', '.', '.', '.', '#', '.', '.', '.', '.', '.', '#', '.', '.', '#', '#', '#', '.', '.', '.', '.', '#', '#', '#'], ['.', '#', '#', '#', '.', '#', '#', '#', '.', '.', '.', '#', '#', '.', '.', '.', '.', '#', '.', '.', '#', '#', '#', '#', '.', '.', '.', '#', '#', '#'], ['.', '.', '#', '#', '.', '#', '#', '#', '#', '.', '#', '.', '#', '.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#'], ['.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '.', '.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#'], ['.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '.', '.', '.', '.', '.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '.', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'], ['.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#']];
+  root = this;
   Array.prototype.shuffle = function() {
     return this.sort(function() {
       return 0.5 - Math.random();
@@ -86,10 +88,81 @@
     asteroids = new Asteroids(1024, 768);
     return asteroids.start();
   });
+  Map = (function() {
+    function Map(file) {
+      var m, numCols, numRows, row, _fn, _ref;
+      this.sprite = new Sprite("assets/images/sea_beach.png", 128, 128, 512);
+      this.sprite.addImage("#.#.", 0);
+      this.sprite.addImage("##..", 1);
+      this.sprite.addImage(".#.#", 2);
+      this.sprite.addImage("..##", 3);
+      this.sprite.addImage("#.##", 4);
+      this.sprite.addImage(".###", 5);
+      this.sprite.addImage("###.", 6);
+      this.sprite.addImage("##.#", 7);
+      this.sprite.addImage(".#..", 8);
+      this.sprite.addImage("#...", 9);
+      this.sprite.addImage("...#", 10);
+      this.sprite.addImage("..#.", 11);
+      this.sprite.addImage(".##.", 12);
+      this.sprite.addImage("#..#", 13);
+      this.sprite.addImage(".XX.", 14);
+      this.sprite.addImage("X..X", 15);
+      this.sprite.addImage("....", 16);
+      this.sprite.addImage("####", 17);
+      m = root.mapdata;
+      numRows = m.length;
+      numCols = m[0].length;
+      this.tiles = [];
+      _fn = __bind(function() {
+        var col, _ref2, _results;
+        _results = [];
+        for (col = 0, _ref2 = numCols - 2; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
+          _results.push(__bind(function() {
+            var type;
+            type = "" + m[row][col] + m[row][col + 1] + m[row + 1][col] + m[row + 1][col + 1];
+            return this.tiles.push(new Tile(this.sprite, type, row, col));
+          }, this)());
+        }
+        return _results;
+      }, this);
+      for (row = 0, _ref = numRows - 2; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
+        _fn();
+      }
+    }
+    Map.prototype.render = function(ctx) {
+      var tile, _i, _len, _ref, _results;
+      _ref = this.tiles;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tile = _ref[_i];
+        _results.push((function(tile) {
+          return tile.render(ctx);
+        })(tile));
+      }
+      return _results;
+    };
+    return Map;
+  })();
+  Tile = (function() {
+    function Tile(sprite, type, row, col) {
+      this.sprite = sprite;
+      this.type = type;
+      this.row = row;
+      this.col = col;
+    }
+    Tile.prototype.render = function(ctx) {
+      ctx.save();
+      ctx.translate(this.col * 128, this.row * 128);
+      this.sprite.render(this.type, ctx);
+      return ctx.restore();
+    };
+    return Tile;
+  })();
   Spaceship = (function() {
     function Spaceship() {
       this.state = "normal";
-      this.sprite = new Sprite("assets/images/test.png", 50, 50);
+      this.sprite = new Sprite("assets/images/test.png", 50, 50, 250);
       this.sprite.addAnimation("normal", {
         frames: [0, 1, 2, 3, 4].shuffle(),
         fps: 3,
@@ -133,12 +206,12 @@
     return Spaceship;
   })();
   Sprite = (function() {
-    function Sprite(file, width, height) {
+    function Sprite(file, width, height, texWidth) {
       this.width = width;
       this.height = height;
+      this.texWidth = texWidth;
       this.texture = new Image();
       this.texture.src = file;
-      this.texWidth = 250;
       this.assets = {};
     }
     Sprite.prototype.addImage = function(name, index) {
@@ -224,11 +297,12 @@
     __extends(StateIntro, State);
     function StateIntro() {
       var i, _fn;
+      this.map = new Map("assets/map.png");
       this.spaceships = [];
       _fn = __bind(function(i) {
         return this.spaceships[i] = new Spaceship;
       }, this);
-      for (i = 0; i <= 50; i++) {
+      for (i = 0; i <= 3; i++) {
         _fn(i);
       }
     }
@@ -246,6 +320,7 @@
     };
     StateIntro.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
+      this.map.render(ctx);
       _ref = this.spaceships;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
