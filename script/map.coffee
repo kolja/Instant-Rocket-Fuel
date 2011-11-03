@@ -1,7 +1,8 @@
 
-
 class Map
   constructor: (file) ->
+    
+    @loadMapDataFromImage "assets/map.png" 
     
     @sprite = new Sprite "assets/images/sea_beach.png", 128, 128, 512 # Map has the sprite - no separate sprite for every Tile.
     @sprite.addImage "#.#.", 0
@@ -37,26 +38,28 @@ class Map
   render: (ctx) ->
     for tile in @tiles
       do (tile) ->
-        tile.render(ctx)
+        tile.render(ctx) 
         
   
-  ## loadMapData and loadMapDataFrom image do not work.
-  ## Struggling with same origin policy
-  #loadMapData: (file) ->
-  #  $.getJSON "assets/map.json", {}, (data) -> 
-  #    console.log data
-  # 
-  ## http://stackoverflow.com/questions/934012/get-image-data-in-javascript
-  #loadMapDataFromImage: (file) ->
-  #  map = new Image()
-  #  map.src = file
-  #  # perhaps we need a callback that binds to the "load" event here?
-  #  canvas = document.createElement("canvas")
-  #  canvas.width = 50 #map.width 
-  #  canvas.height = 50 #map.height
-  #  ctx = canvas.getContext("2d")
-  #  ctx.drawImage( map, 0, 0)
-  #  ctx.getImageData(0,0,50,50).data 
+  # loadMapData and loadMapDataFrom image do not work.
+  # Struggling with same origin policy
+  loadMapData: (file) ->
+    $.getJSON "assets/map.json", {}, (data) -> 
+      console.log data
+   
+  # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
+  loadMapDataFromImage: (file) ->
+    map = new Image()
+    map.src = file
+    # perhaps we need a callback that binds to the "load" event here?
+    $(map).load ->
+      canvas = document.createElement("canvas")
+      canvas.width = map.width 
+      canvas.height = map.height
+      ctx = canvas.getContext("2d")
+      ctx.drawImage( map, 0, 0)
+      data = ctx.getImageData(0,0,50,50).data
+      console.log data
     
 class Tile
   constructor: (@sprite, @type, @row, @col) ->

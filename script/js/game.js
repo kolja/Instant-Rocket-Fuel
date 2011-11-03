@@ -91,6 +91,7 @@
   Map = (function() {
     function Map(file) {
       var m, numCols, numRows, row, _fn, _ref;
+      this.loadMapDataFromImage("assets/map.png");
       this.sprite = new Sprite("assets/images/sea_beach.png", 128, 128, 512);
       this.sprite.addImage("#.#.", 0);
       this.sprite.addImage("##..", 1);
@@ -141,6 +142,26 @@
         })(tile));
       }
       return _results;
+    };
+    Map.prototype.loadMapData = function(file) {
+      return $.getJSON("assets/map.json", {}, function(data) {
+        return console.log(data);
+      });
+    };
+    Map.prototype.loadMapDataFromImage = function(file) {
+      var map;
+      map = new Image();
+      map.src = file;
+      return $(map).load(function() {
+        var canvas, ctx, data;
+        canvas = document.createElement("canvas");
+        canvas.width = map.width;
+        canvas.height = map.height;
+        ctx = canvas.getContext("2d");
+        ctx.drawImage(map, 0, 0);
+        data = ctx.getImageData(0, 0, 50, 50).data;
+        return console.log(data);
+      });
     };
     return Map;
   })();
