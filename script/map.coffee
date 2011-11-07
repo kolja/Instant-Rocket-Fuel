@@ -1,29 +1,13 @@
 
 class Map
-  constructor: (file) ->
+  constructor: (hash) ->
     
-    @loadMapDataFromImage "assets/map.png" 
+    @map = hash["map"]
+    @pattern = hash["pattern"]
+    @sprite = hash["sprite"]
     
-    @sprite = new Sprite "assets/images/sea_beach.png", 128, 128, 512 # Map has the sprite - no separate sprite for every Tile.
-    @sprite.addImage "#.#.", 0
-    @sprite.addImage "##..", 1
-    @sprite.addImage ".#.#", 2
-    @sprite.addImage "..##", 3
-    @sprite.addImage "#.##", 4
-    @sprite.addImage ".###", 5
-    @sprite.addImage "###.", 6
-    @sprite.addImage "##.#", 7
-    @sprite.addImage ".#..", 8
-    @sprite.addImage "#...", 9
-    @sprite.addImage "...#", 10
-    @sprite.addImage "..#.", 11
-    @sprite.addImage ".##.", 12
-    @sprite.addImage "#..#", 13
-    @sprite.addImage ".XX.", 14
-    @sprite.addImage "X..X", 15
-    @sprite.addImage "....", 16
-    @sprite.addImage "####", 17
-    
+    @loadMapDataFromImage @map
+
     m = root.mapdata
     numRows = m.length
     numCols = m[0].length
@@ -38,34 +22,32 @@ class Map
   render: (ctx) ->
     for tile in @tiles
       do (tile) ->
-        tile.render(ctx) 
+        tile.render(ctx)
         
-  
-  # loadMapData and loadMapDataFrom image do not work.
-  # Struggling with same origin policy
-  loadMapData: (file) ->
-    $.getJSON "assets/map.json", {}, (data) -> 
-      console.log data
-   
+  # Same-Origin-Policy: Chrome must be started with 
   # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
   loadMapDataFromImage: (file) ->
     map = new Image()
     map.src = file
-    # perhaps we need a callback that binds to the "load" event here?
     $(map).load ->
       canvas = document.createElement("canvas")
       canvas.width = map.width 
       canvas.height = map.height
       ctx = canvas.getContext("2d")
       ctx.drawImage( map, 0, 0)
-      data = ctx.getImageData(0,0,50,50).data
+      data = ctx.getImageData(0,0,15,15).data
       console.log data
     
 class Tile
   constructor: (@sprite, @type, @row, @col) ->
     
   render: (ctx) ->
+    #ctx.save()
+    #ctx.scale 1, 0.5
+    #ctx.rotate 45
+    #ctx.translate 200, -1000
     ctx.save()
-    ctx.translate @col*128, @row*128
+    ctx.translate @col*87, @row*87
     @sprite.render( @type, ctx )
     ctx.restore()
+    #ctx.restore()

@@ -89,28 +89,12 @@
     return asteroids.start();
   });
   Map = (function() {
-    function Map(file) {
+    function Map(hash) {
       var m, numCols, numRows, row, _fn, _ref;
-      this.loadMapDataFromImage("assets/map.png");
-      this.sprite = new Sprite("assets/images/sea_beach.png", 128, 128, 512);
-      this.sprite.addImage("#.#.", 0);
-      this.sprite.addImage("##..", 1);
-      this.sprite.addImage(".#.#", 2);
-      this.sprite.addImage("..##", 3);
-      this.sprite.addImage("#.##", 4);
-      this.sprite.addImage(".###", 5);
-      this.sprite.addImage("###.", 6);
-      this.sprite.addImage("##.#", 7);
-      this.sprite.addImage(".#..", 8);
-      this.sprite.addImage("#...", 9);
-      this.sprite.addImage("...#", 10);
-      this.sprite.addImage("..#.", 11);
-      this.sprite.addImage(".##.", 12);
-      this.sprite.addImage("#..#", 13);
-      this.sprite.addImage(".XX.", 14);
-      this.sprite.addImage("X..X", 15);
-      this.sprite.addImage("....", 16);
-      this.sprite.addImage("####", 17);
+      this.map = hash["map"];
+      this.pattern = hash["pattern"];
+      this.sprite = hash["sprite"];
+      this.loadMapDataFromImage(this.map);
       m = root.mapdata;
       numRows = m.length;
       numCols = m[0].length;
@@ -143,11 +127,6 @@
       }
       return _results;
     };
-    Map.prototype.loadMapData = function(file) {
-      return $.getJSON("assets/map.json", {}, function(data) {
-        return console.log(data);
-      });
-    };
     Map.prototype.loadMapDataFromImage = function(file) {
       var map;
       map = new Image();
@@ -159,7 +138,7 @@
         canvas.height = map.height;
         ctx = canvas.getContext("2d");
         ctx.drawImage(map, 0, 0);
-        data = ctx.getImageData(0, 0, 50, 50).data;
+        data = ctx.getImageData(0, 0, 15, 15).data;
         return console.log(data);
       });
     };
@@ -174,7 +153,7 @@
     }
     Tile.prototype.render = function(ctx) {
       ctx.save();
-      ctx.translate(this.col * 128, this.row * 128);
+      ctx.translate(this.col * 87, this.row * 87);
       this.sprite.render(this.type, ctx);
       return ctx.restore();
     };
@@ -183,7 +162,12 @@
   Spaceship = (function() {
     function Spaceship() {
       this.state = "normal";
-      this.sprite = new Sprite("assets/images/test.png", 50, 50, 250);
+      this.sprite = new Sprite({
+        "texture": "assets/images/test.png",
+        "width": 50,
+        "height": 50,
+        "texWidth": 250
+      });
       this.sprite.addAnimation("normal", {
         frames: [0, 1, 2, 3, 4].shuffle(),
         fps: 3,
@@ -227,13 +211,20 @@
     return Spaceship;
   })();
   Sprite = (function() {
-    function Sprite(file, width, height, texWidth) {
-      this.width = width;
-      this.height = height;
-      this.texWidth = texWidth;
-      this.texture = new Image();
-      this.texture.src = file;
+    function Sprite(hash) {
+      var i, key, _ref, _ref2;
+      this.width = hash["width"];
+      this.height = hash["height"];
+      this.texWidth = hash["texWidth"];
+      this.key = (_ref = hash["key"]) != null ? _ref : {};
       this.assets = {};
+      _ref2 = hash["key"];
+      for (key in _ref2) {
+        i = _ref2[key];
+        this.addImage(key, i);
+      }
+      this.texture = new Image();
+      this.texture.src = hash["texture"];
     }
     Sprite.prototype.addImage = function(name, index) {
       return this.assets[name] = new Shape(this, index);
@@ -317,8 +308,36 @@
   StateIntro = (function() {
     __extends(StateIntro, State);
     function StateIntro() {
-      var i, _fn;
-      this.map = new Map("assets/map.png");
+      var beach3d, i, _fn;
+      beach3d = new Sprite({
+        "texture": "assets/images/beach3d.png",
+        "width": 107,
+        "height": 107,
+        "texWidth": 428,
+        "key": {
+          "#.##": 0,
+          ".###": 1,
+          "##.#": 2,
+          "###.": 3,
+          "#.#.": 4,
+          "..##": 5,
+          ".#.#": 6,
+          "##..": 7,
+          "..#.": 8,
+          "...#": 9,
+          ".#..": 10,
+          "#...": 11,
+          "####": 12,
+          "....": 13,
+          "#..#": 14,
+          ".##.": 15
+        }
+      });
+      this.map = new Map({
+        "map": "assets/minimap.png",
+        "pattern": "square",
+        "sprite": beach3d
+      });
       this.spaceships = [];
       _fn = __bind(function(i) {
         return this.spaceships[i] = new Spaceship;

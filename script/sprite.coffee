@@ -4,16 +4,36 @@
 # 
 # usage:
 #
-# sprite = new Sprite( "img/texture.png", 50, 50 )
-# sprite.addImage "spaceship", 5 # use the sixth image on the texture as spaceship
+# sprite = new Sprite( {
+#   "texture": "img/texture.png, 
+#   "width":50, 
+#   "height":50, 
+#   "texWidth":250 
+#   "key": {
+#     "spaceship": 1,
+#     "rock": 2,
+#     "enemy": 3
+#   }
+# })
+# 
 # sprite.render("spaceship")
 #
 
 class Sprite
-  constructor: ( file, @width, @height, @texWidth ) ->
-    @texture = new Image()
-    @texture.src = file
+  constructor: (hash) ->
+    @width = hash["width"]
+    @height = hash["height"]
+    @texWidth = hash["texWidth"]
+    @key = hash["key"] ? {}
+    
     @assets = {}
+    
+    for key, i of hash["key"]
+      @addImage key, i
+
+    @texture = new Image()
+    @texture.src = hash["texture"]
+    
     
   addImage: (name, index) ->
     @assets[name] = new Shape this, index
