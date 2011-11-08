@@ -88,7 +88,12 @@
     };
     Asteroids.prototype.render = function() {
       this.ctx.clearRect(0, 0, this.width, this.height);
+      this.ctx.save();
+      this.ctx.scale(1, 0.5);
+      this.ctx.rotate(Math.PI / 4);
+      this.ctx.translate(200, -400);
       this.stateManager.currentState.render(this.ctx);
+      this.ctx.restore();
       return Asteroids.__super__.render.call(this);
     };
     return Asteroids;

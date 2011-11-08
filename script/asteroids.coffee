@@ -21,7 +21,12 @@ class Asteroids extends Game
 
   render: ->
     @ctx.clearRect 0, 0, @width, @height
+    @ctx.save()
+    @ctx.scale 1, 0.5
+    @ctx.rotate Math.PI/4
+    @ctx.translate 200, -400
     @stateManager.currentState.render @ctx
+    @ctx.restore() 
     super()
     
   
