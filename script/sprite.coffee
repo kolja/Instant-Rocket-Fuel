@@ -23,6 +23,8 @@ class Sprite
   constructor: (hash) ->
     @width = hash["width"]
     @height = hash["height"]
+    @innerWidth = hash["innerWidth"]
+    @innerHeight = hash["innerHeight"]
     @texWidth = hash["texWidth"]
     @key = hash["key"] ? {}
     

@@ -102,10 +102,9 @@
   Map = (function() {
     function Map(hash) {
       this.map = hash["map"];
-      this.pattern = hash["pattern"];
       this.sprite = hash["sprite"];
       this.tiles = [];
-      this.loadMapDataFromImage(this.map);
+      this.loadMapDataFromImage(this.map, hash["pattern"]);
     }
     Map.prototype.render = function(ctx) {
       var tile, _i, _len, _ref, _results;
@@ -119,19 +118,19 @@
       }
       return _results;
     };
-    Map.prototype.loadMapDataFromImage = function(file) {
+    Map.prototype.loadMapDataFromImage = function(file, pattern) {
       var m, map;
       map = new Image();
       map.src = file;
       m = [];
       return $(map).load(__bind(function() {
-        var canvas, col, ctx, data, i, p, row, type, z, _len, _ref, _ref2, _results, _step;
+        var canvas, col, ctx, data, i, p, row, type, z, _len, _ref, _ref2, _ref3, _ref4, _results, _results2, _results3, _step, _step2;
         canvas = document.createElement("canvas");
         canvas.width = map.width;
         canvas.height = map.height;
         ctx = canvas.getContext("2d");
         ctx.drawImage(map, 0, 0);
-        data = ctx.getImageData(0, 0, 15, 15).data;
+        data = ctx.getImageData(0, 0, map.width, map.height).data;
         for (i = 0, _len = data.length, _step = 4; i < _len; i += _step) {
           p = data[i];
           row = Math.floor((i / 4) / map.width);
@@ -142,20 +141,53 @@
           };
           m[row].push([Number(data[i]).toHex(), Number(data[i + 1]).toHex(), Number(data[i + 2]).toHex(), Number(data[i + 3]).toHex()]);
         }
-        _results = [];
-        for (row = 0, _ref2 = map.width - 2; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
-          _results.push((function() {
-            var _ref3, _results2;
+        switch (pattern) {
+          case "simple":
+            _results = [];
+            for (row = 0, _ref2 = map.width - 1; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
+              _results.push((function() {
+                var _ref3, _results2;
+                _results2 = [];
+                for (col = 0, _ref3 = map.height - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
+                  type = m[row][col][0];
+                  z = parseInt(m[row][col][2], 16);
+                  _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+                }
+                return _results2;
+              }).call(this));
+            }
+            return _results;
+            break;
+          case "square":
             _results2 = [];
-            for (col = 0, _ref3 = map.height - 2; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
-              type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
-              z = parseInt(m[row][col][2], 16);
-              _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+            for (row = 0, _ref3 = map.width - 2; 0 <= _ref3 ? row <= _ref3 : row >= _ref3; 0 <= _ref3 ? row++ : row--) {
+              _results2.push((function() {
+                var _ref4, _results3;
+                _results3 = [];
+                for (col = 0, _ref4 = map.height - 2; 0 <= _ref4 ? col <= _ref4 : col >= _ref4; 0 <= _ref4 ? col++ : col--) {
+                  type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
+                  z = parseInt(m[row][col][2], 16);
+                  _results3.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+                }
+                return _results3;
+              }).call(this));
             }
             return _results2;
-          }).call(this));
+            break;
+          case "cross":
+            _results3 = [];
+            for (row = 1, _ref4 = map.width - 2, _step2 = 2; 1 <= _ref4 ? row <= _ref4 : row >= _ref4; row += _step2) {
+              _results3.push((function() {
+                var _ref5, _results4, _step3;
+                _results4 = [];
+                for (col = 1, _ref5 = map.height - 2, _step3 = 2; 1 <= _ref5 ? col <= _ref5 : col >= _ref5; col += _step3) {
+                  _results4.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, z))) : void 0);
+                }
+                return _results4;
+              }).call(this));
+            }
+            return _results3;
         }
-        return _results;
       }, this));
     };
     return Map;
@@ -170,7 +202,7 @@
     }
     Tile.prototype.render = function(ctx) {
       ctx.save();
-      ctx.translate(this.col * 87, this.row * 87);
+      ctx.translate(this.col * this.sprite.innerWidth, this.row * this.sprite.innerHeight);
       this.sprite.render(this.type, ctx);
       return ctx.restore();
     };
@@ -232,6 +264,8 @@
       var i, key, _ref, _ref2;
       this.width = hash["width"];
       this.height = hash["height"];
+      this.innerWidth = hash["innerWidth"];
+      this.innerHeight = hash["innerHeight"];
       this.texWidth = hash["texWidth"];
       this.key = (_ref = hash["key"]) != null ? _ref : {};
       this.assets = {};
@@ -325,11 +359,13 @@
   StateIntro = (function() {
     __extends(StateIntro, State);
     function StateIntro() {
-      var beach3d, i, _fn;
+      var beach3d, i, maze, _fn;
       beach3d = new Sprite({
         "texture": "assets/images/beach3d.png",
         "width": 107,
         "height": 107,
+        "innerWidth": 87,
+        "innerHeight": 87,
         "texWidth": 428,
         "key": {
           "dd00dddd": 0,
@@ -350,8 +386,35 @@
           "00dddd00": 15
         }
       });
+      maze = new Sprite({
+        "texture": "assets/images/walls.png",
+        "width": 100,
+        "height": 100,
+        "innerWidth": 50,
+        "innerHeight": 50,
+        "texWidth": 600,
+        "key": {
+          "dddddddd": 0,
+          "dd00dddd": 1,
+          "dddd00dd": 2,
+          "dddddd00": 3,
+          "00dddddd": 4,
+          "00000000": 5,
+          "00dddd00": 6,
+          "0000dddd": 7,
+          "dd0000dd": 8,
+          "dddd0000": 9,
+          "00dd00dd": 12,
+          "dd00dd00": 13,
+          "00dd0000": 14,
+          "0000dd00": 15,
+          "000000dd": 16,
+          "dd000000": 17
+        }
+      });
       this.map = new Map({
         "map": "assets/minimap.png",
+        "overlap": 87,
         "pattern": "square",
         "sprite": beach3d
       });

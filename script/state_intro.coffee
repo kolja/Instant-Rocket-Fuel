@@ -5,6 +5,8 @@ class StateIntro extends State
       "texture": "assets/images/beach3d.png"
       "width": 107
       "height": 107
+      "innerWidth": 87
+      "innerHeight": 87
       "texWidth": 428
       "key":
         "dd00dddd": 0
@@ -23,29 +25,45 @@ class StateIntro extends State
         "00000000": 13
         "dd0000dd": 14
         "00dddd00": 15
-
+    
+    maze = new Sprite
+      "texture": "assets/images/walls.png"
+      "width": 100
+      "height": 100
+      "innerWidth": 50
+      "innerHeight": 50
+      "texWidth": 600
+      "key":
+        "dddddddd": 0
+        "dd00dddd": 1
+        "dddd00dd": 2
+        "dddddd00": 3
+        "00dddddd": 4
+        "00000000": 5
+        "00dddd00": 6
+        "0000dddd": 7
+        "dd0000dd": 8
+        "dddd0000": 9
+        "00dd00dd": 12
+        "dd00dd00": 13
+        "00dd0000": 14
+        "0000dd00": 15
+        "000000dd": 16
+        "dd000000": 17
+    
     
     @map = new Map
       "map": "assets/minimap.png"
+      "overlap": 87
       "pattern": "square"
       "sprite": beach3d
-    
-    #"dd00dd00", 0
-    #"dddd0000", 1
-    #"00dd00dd", 2
-    #"0000dddd", 3
-    #"dd00dddd", 4
-    #"00dddddd", 5
-    #"dddddd00", 6
-    #"dddd00dd", 7
-    #"00dd0000", 8
-    #"dd000000", 9
-    #"000000dd", 10
-    #"0000dd00", 11
-    #"00dddd00", 12
-    #"dd0000dd", 13
-    #"00000000", 16
-    #"dddddddd", 17
+
+    #@map = new Map
+    #  "map": "assets/maze.png"
+    #  "overlap": 50
+    #  "pattern": "cross"
+    #  "sprite": maze
+
     
     @spaceships = []
     for i in [0..3]
