@@ -52,18 +52,19 @@ class StateIntro extends State
         "dd000000": 17
     
     
-    @map = new Map
+    @background = new Map
       "map": "assets/minimap.png"
       "overlap": 87
       "pattern": "square"
       "sprite": beach3d
 
-    #@map = new Map
+    #@background = new Map
     #  "map": "assets/maze.png"
     #  "overlap": 50
     #  "pattern": "cross"
     #  "sprite": maze
 
+    # @background = new Background
     
     @spaceships = []
     for i in [0..3]
@@ -75,8 +76,8 @@ class StateIntro extends State
       do (spaceship) =>
         spaceship.update delta
     
-  render: (ctx) ->
-    @map.render(ctx)
+  render: (ctx) -> 
+    @background.render(ctx)
     for spaceship in @spaceships
       do (spaceship) =>
         spaceship.render ctx

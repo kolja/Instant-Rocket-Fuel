@@ -2,12 +2,12 @@ fs     = require 'fs'
 {exec} = require 'child_process'
 
 appFiles  = [
-  'mapdata'
   'helpers'
   'game'
   'asteroids'
   'map'
   'spaceship'
+  'background'
   'sprite'
   'state'
   'state_intro'
