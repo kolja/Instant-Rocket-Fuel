@@ -15,6 +15,17 @@
       return 0.5 - Math.random();
     });
   };
+  Number.prototype.toHex = function(padding) {
+    var hex;
+    if (padding == null) {
+      padding = 2;
+    }
+    hex = this.toString(16);
+    while (hex.length < padding) {
+      hex = "0" + hex;
+    }
+    return hex;
+  };
   Game = (function() {
     function Game(width, height) {
       var canvas;
@@ -90,30 +101,11 @@
   });
   Map = (function() {
     function Map(hash) {
-      var m, numCols, numRows, row, _fn, _ref;
       this.map = hash["map"];
       this.pattern = hash["pattern"];
       this.sprite = hash["sprite"];
-      this.loadMapDataFromImage(this.map);
-      m = root.mapdata;
-      numRows = m.length;
-      numCols = m[0].length;
       this.tiles = [];
-      _fn = __bind(function() {
-        var col, _ref2, _results;
-        _results = [];
-        for (col = 0, _ref2 = numCols - 2; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
-          _results.push(__bind(function() {
-            var type;
-            type = "" + m[row][col] + m[row][col + 1] + m[row + 1][col] + m[row + 1][col + 1];
-            return this.tiles.push(new Tile(this.sprite, type, row, col));
-          }, this)());
-        }
-        return _results;
-      }, this);
-      for (row = 0, _ref = numRows - 2; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
-        _fn();
-      }
+      this.loadMapDataFromImage(this.map);
     }
     Map.prototype.render = function(ctx) {
       var tile, _i, _len, _ref, _results;
@@ -128,28 +120,53 @@
       return _results;
     };
     Map.prototype.loadMapDataFromImage = function(file) {
-      var map;
+      var m, map;
       map = new Image();
       map.src = file;
-      return $(map).load(function() {
-        var canvas, ctx, data;
+      m = [];
+      return $(map).load(__bind(function() {
+        var canvas, col, ctx, data, i, p, row, type, z, _len, _ref, _ref2, _results, _step;
         canvas = document.createElement("canvas");
         canvas.width = map.width;
         canvas.height = map.height;
         ctx = canvas.getContext("2d");
         ctx.drawImage(map, 0, 0);
         data = ctx.getImageData(0, 0, 15, 15).data;
-        return console.log(data);
-      });
+        for (i = 0, _len = data.length, _step = 4; i < _len; i += _step) {
+          p = data[i];
+          row = Math.floor((i / 4) / map.width);
+                    if ((_ref = m[row]) != null) {
+            _ref;
+          } else {
+            m[row] = [];
+          };
+          m[row].push([Number(data[i]).toHex(), Number(data[i + 1]).toHex(), Number(data[i + 2]).toHex(), Number(data[i + 3]).toHex()]);
+        }
+        _results = [];
+        for (row = 0, _ref2 = map.width - 2; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
+          _results.push((function() {
+            var _ref3, _results2;
+            _results2 = [];
+            for (col = 0, _ref3 = map.height - 2; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
+              type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
+              z = parseInt(m[row][col][2], 16);
+              _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+            }
+            return _results2;
+          }).call(this));
+        }
+        return _results;
+      }, this));
     };
     return Map;
   })();
   Tile = (function() {
-    function Tile(sprite, type, row, col) {
+    function Tile(sprite, type, row, col, z) {
       this.sprite = sprite;
       this.type = type;
       this.row = row;
       this.col = col;
+      this.z = z != null ? z : 0;
     }
     Tile.prototype.render = function(ctx) {
       ctx.save();
@@ -315,22 +332,22 @@
         "height": 107,
         "texWidth": 428,
         "key": {
-          "#.##": 0,
-          ".###": 1,
-          "##.#": 2,
-          "###.": 3,
-          "#.#.": 4,
-          "..##": 5,
-          ".#.#": 6,
-          "##..": 7,
-          "..#.": 8,
-          "...#": 9,
-          ".#..": 10,
-          "#...": 11,
-          "####": 12,
-          "....": 13,
-          "#..#": 14,
-          ".##.": 15
+          "dd00dddd": 0,
+          "00dddddd": 1,
+          "dddd00dd": 2,
+          "dddddd00": 3,
+          "dd00dd00": 4,
+          "0000dddd": 5,
+          "00dd00dd": 6,
+          "dddd0000": 7,
+          "0000dd00": 8,
+          "000000dd": 9,
+          "00dd0000": 10,
+          "dd000000": 11,
+          "dddddddd": 12,
+          "00000000": 13,
+          "dd0000dd": 14,
+          "00dddd00": 15
         }
       });
       this.map = new Map({
