@@ -57,6 +57,6 @@ class Tile
     
   render: (ctx) ->
     ctx.save()
-    ctx.translate @col*@sprite.innerWidth, @row*@sprite.innerHeight # - @z  # 87
+    ctx.translate @col*@sprite.innerWidth, @row*@sprite.innerHeight # - @z
     @sprite.render( @type, ctx )
     ctx.restore()

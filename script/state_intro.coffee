@@ -54,7 +54,7 @@ class StateIntro extends State
     
     @background = new Map
       "map": "assets/minimap.png"
-      "overlap": 87
+      "overlap": 87 
       "pattern": "square"
       "sprite": beach3d
 
