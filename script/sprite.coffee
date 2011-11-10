@@ -21,34 +21,35 @@
 
 class Sprite
   constructor: (hash) ->
+    @assets = {}
     @width = hash["width"]
     @height = hash["height"]
-    @innerWidth = hash["innerWidth"]
-    @innerHeight = hash["innerHeight"]
-    @texWidth = hash["texWidth"]
-    @key = hash["key"] ? {}
-    
-    @assets = {}
-    
-    for key, i of hash["key"]
-      @addImage key, i
-
     @texture = new Image()
     @texture.src = hash["texture"]
-    
+    #@texWidth = hash["texWidth"]
+    @key = hash["key"] ? {}
+      
+    for key, i of @key
+      @addImage key, i
+
+    @innerWidth = hash["innerWidth"] ? @width
+    @innerHeight = hash["innerHeight"] ? @height
     
   addImage: (name, index) ->
-    @assets[name] = new Shape this, index
+    $(@texture).load =>
+      @texWidth = @texture.width
+      @assets[name] = new Shape this, index
     
   addAnimation: (name, params) ->
-    @assets[name] = new Animation this, params
+    $(@texture).load =>
+      @texWidth = @texture.width
+      @assets[name] = new Animation this, params
     
   render: (name, ctx) ->
-    @assets[name].render(ctx)
+    @assets[name].render(ctx) if @assets[name]?
 
 class Shape
-  constructor: (sprite, index) ->
-    @sprite = sprite
+  constructor: (@sprite, index) ->
     @sx = ( index * @sprite.width ) % @sprite.texWidth
     @sy = Math.floor(( index * @sprite.width ) / @sprite.texWidth) * @sprite.height
     
@@ -56,14 +57,12 @@ class Shape
     ctx.drawImage( @sprite.texture, @sx, @sy, @sprite.width, @sprite.height, 0, 0, @sprite.width, @sprite.height )
 
 class Animation 
-  constructor: (sprite, params) ->
-    @sprite = sprite
+  constructor: (@sprite, params) ->
     @fps = params["fps"] ? 30
     @loop = params["loop"] ? true
     @callback = params["callback"] ? null
     @frames = for index in params["frames"] 
-      do (index) =>
-        new Shape @sprite, index
+      new Shape @sprite, index
     @lastFrame = @frames.length - 1
     @timer = new Timer
     @currentFrame = 0

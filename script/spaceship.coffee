@@ -8,7 +8,6 @@ class Spaceship
       "texture": "assets/images/test.png"
       "width": 50
       "height": 50
-      "texWidth": 250
       
     # @sprite.addImage "normal", Math.floor Math.random() * 10
     @sprite.addAnimation "normal", { frames: [0,1,2,3,4].shuffle(), fps: 3, loop: true, callback: @hello }

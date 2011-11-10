@@ -7,7 +7,6 @@ class StateIntro extends State
       "height": 107
       "innerWidth": 87
       "innerHeight": 87
-      "texWidth": 428
       "key":
         "dd00dddd": 0
         "00dddddd": 1
@@ -32,7 +31,6 @@ class StateIntro extends State
       "height": 100
       "innerWidth": 50
       "innerHeight": 50
-      "texWidth": 600
       "key":
         "dddddddd": 0
         "dd00dddd": 1

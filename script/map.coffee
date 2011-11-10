@@ -8,8 +8,7 @@ class Map
 
   render: (ctx) ->
     for tile in @tiles
-      do (tile) ->
-        tile.render(ctx)
+      tile.render(ctx)
 
   # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
   # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
@@ -57,6 +56,6 @@ class Tile
     
   render: (ctx) ->
     ctx.save()
-    ctx.translate @col*@sprite.innerWidth, @row*@sprite.innerHeight # - @z
+    ctx.translate @col*@sprite.innerWidth - @z, @row*@sprite.innerHeight - @z
     @sprite.render( @type, ctx )
     ctx.restore()

@@ -32,8 +32,8 @@
       this.height = height;
       this.gameloop = __bind(this.gameloop, this);
       canvas = $('<canvas/>').attr({
-        "width": 1024,
-        "height": 768
+        "width": this.width,
+        "height": this.height
       });
       $("body").append(canvas);
       this.ctx = canvas[0].getContext('2d');
@@ -116,9 +116,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tile = _ref[_i];
-        _results.push((function(tile) {
-          return tile.render(ctx);
-        })(tile));
+        _results.push(tile.render(ctx));
       }
       return _results;
     };
@@ -206,7 +204,7 @@
     }
     Tile.prototype.render = function(ctx) {
       ctx.save();
-      ctx.translate(this.col * this.sprite.innerWidth, this.row * this.sprite.innerHeight);
+      ctx.translate(this.col * this.sprite.innerWidth - this.z, this.row * this.sprite.innerHeight - this.z);
       this.sprite.render(this.type, ctx);
       return ctx.restore();
     };
@@ -218,8 +216,7 @@
       this.sprite = new Sprite({
         "texture": "assets/images/test.png",
         "width": 50,
-        "height": 50,
-        "texWidth": 250
+        "height": 50
       });
       this.sprite.addAnimation("normal", {
         frames: [0, 1, 2, 3, 4].shuffle(),
@@ -280,30 +277,37 @@
   })();
   Sprite = (function() {
     function Sprite(hash) {
-      var i, key, _ref, _ref2;
+      var i, key, _ref, _ref2, _ref3, _ref4;
+      this.assets = {};
       this.width = hash["width"];
       this.height = hash["height"];
-      this.innerWidth = hash["innerWidth"];
-      this.innerHeight = hash["innerHeight"];
-      this.texWidth = hash["texWidth"];
+      this.texture = new Image();
+      this.texture.src = hash["texture"];
       this.key = (_ref = hash["key"]) != null ? _ref : {};
-      this.assets = {};
-      _ref2 = hash["key"];
+      _ref2 = this.key;
       for (key in _ref2) {
         i = _ref2[key];
         this.addImage(key, i);
       }
-      this.texture = new Image();
-      this.texture.src = hash["texture"];
+      this.innerWidth = (_ref3 = hash["innerWidth"]) != null ? _ref3 : this.width;
+      this.innerHeight = (_ref4 = hash["innerHeight"]) != null ? _ref4 : this.height;
     }
     Sprite.prototype.addImage = function(name, index) {
-      return this.assets[name] = new Shape(this, index);
+      return $(this.texture).load(__bind(function() {
+        this.texWidth = this.texture.width;
+        return this.assets[name] = new Shape(this, index);
+      }, this));
     };
     Sprite.prototype.addAnimation = function(name, params) {
-      return this.assets[name] = new Animation(this, params);
+      return $(this.texture).load(__bind(function() {
+        this.texWidth = this.texture.width;
+        return this.assets[name] = new Animation(this, params);
+      }, this));
     };
     Sprite.prototype.render = function(name, ctx) {
-      return this.assets[name].render(ctx);
+      if (this.assets[name] != null) {
+        return this.assets[name].render(ctx);
+      }
     };
     return Sprite;
   })();
@@ -331,9 +335,7 @@
         _results = [];
         for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
           index = _ref4[_i];
-          _results.push(__bind(function(index) {
-            return new Shape(this.sprite, index);
-          }, this)(index));
+          _results.push(new Shape(this.sprite, index));
         }
         return _results;
       }).call(this);
@@ -385,7 +387,6 @@
         "height": 107,
         "innerWidth": 87,
         "innerHeight": 87,
-        "texWidth": 428,
         "key": {
           "dd00dddd": 0,
           "00dddddd": 1,
@@ -411,7 +412,6 @@
         "height": 100,
         "innerWidth": 50,
         "innerHeight": 50,
-        "texWidth": 600,
         "key": {
           "dddddddd": 0,
           "dd00dddd": 1,

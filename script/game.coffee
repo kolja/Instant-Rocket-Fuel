@@ -2,7 +2,7 @@
 
 class Game
   constructor: (@width, @height) ->
-    canvas = $('<canvas/>').attr({"width": 1024, "height": 768})
+    canvas = $('<canvas/>').attr({"width": @width, "height": @height})
     $("body").append(canvas)                                     
     @ctx = canvas[0].getContext('2d')
     @ctx.font = '400 18px Helvetica, sans-serif'
