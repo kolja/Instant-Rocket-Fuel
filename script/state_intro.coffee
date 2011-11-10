@@ -1,5 +1,5 @@
 
-class StateIntro extends State
+document.stateclass["intro"] = class StateIntro extends State
   constructor: ->
     beach3d = new Sprite
       "texture": "assets/images/beach3d.png"
@@ -49,18 +49,25 @@ class StateIntro extends State
         "000000dd": 16
         "dd000000": 17
     
+    simple = new Sprite
+      "texture": "assets/images/beach3d.png"
+      "width": 107
+      "height": 107
+      "innerWidth": 87
+      "innerHeight": 87
+      "key":
+        "00": 12
+        "dd": 12
     
-    @background = new Map
-      "map": "assets/minimap.png"
-      "overlap": 87 
-      "pattern": "square"
-      "sprite": beach3d
-
     #@background = new Map
-    #  "map": "assets/maze.png"
-    #  "overlap": 50
-    #  "pattern": "cross"
-    #  "sprite": maze
+    #  "map": "assets/minimap.png"
+    #  "pattern": "square"
+    #  "sprite": beach3d
+
+    @background = new Map
+      "map": "assets/maze.png"
+      "pattern": "cross"
+      "sprite": maze
 
     # @background = new Background
     

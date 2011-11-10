@@ -1,6 +1,6 @@
 
 
-class StateMain extends State
+document.stateclass["main"] = class StateMain extends State
   constructor: ->
     
   update: ->

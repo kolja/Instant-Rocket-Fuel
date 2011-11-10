@@ -1,17 +1,14 @@
 class Statemanager
   
-  constructor: ->
+  constructor: (states) ->
     @statearray = {}
     @currentState = null
-
-  addState: (state) ->
+    for state in states  
+      @addState state
     
-    switch state
-      when "intro" then @statearray[state] = new StateIntro
-      when "main" then  @statearray[state] = new StateMain
-      
+  addState: (state) ->   
+    @statearray[state] = new document.stateclass[state]     
     @setState state unless @currentState? # when a state is added for the first time, it automatically becomes the @currentState
 
   setState: (state) ->
     @currentState = @statearray[state]
-  	

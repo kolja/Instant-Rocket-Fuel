@@ -9,6 +9,7 @@
     return child;
   };
   root = this;
+  document.stateclass = {};
   Array.prototype.shuffle = function() {
     return this.sort(function() {
       return 0.5 - Math.random();
@@ -62,14 +63,8 @@
   Asteroids = (function() {
     __extends(Asteroids, Game);
     function Asteroids(width, height) {
-      var state, _i, _len, _ref;
       Asteroids.__super__.constructor.call(this, width, height);
-      this.stateManager = new Statemanager;
-      _ref = ["intro", "main"];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        state = _ref[_i];
-        this.stateManager.addState(state);
-      }
+      this.stateManager = new Statemanager(["intro", "main"]);
       $("html").keypress(__bind(function(event) {
         var directions;
         console.log(event);
@@ -126,7 +121,7 @@
       map.src = file;
       m = [];
       return $(map).load(__bind(function() {
-        var canvas, col, ctx, data, i, p, row, type, z, _len, _ref, _ref2, _ref3, _ref4, _results, _results2, _results3, _step, _step2;
+        var canvas, col, ctx, data, green, i, p, row, type, z, _len, _ref, _ref2, _ref3, _ref4, _results, _results2, _results3, _step, _step2;
         canvas = document.createElement("canvas");
         canvas.width = map.width;
         canvas.height = map.height;
@@ -151,9 +146,10 @@
                 var _ref3, _results2;
                 _results2 = [];
                 for (col = 0, _ref3 = map.height - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
-                  type = m[row][col][0];
+                  type = "" + m[row][col][0];
+                  green = parseInt(m[row][col][1], 16);
                   z = parseInt(m[row][col][2], 16);
-                  _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+                  _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
                 }
                 return _results2;
               }).call(this));
@@ -168,8 +164,9 @@
                 _results3 = [];
                 for (col = 0, _ref4 = map.height - 2; 0 <= _ref4 ? col <= _ref4 : col >= _ref4; 0 <= _ref4 ? col++ : col--) {
                   type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
+                  green = parseInt(m[row][col][1], 16);
                   z = parseInt(m[row][col][2], 16);
-                  _results3.push(this.tiles.push(new Tile(this.sprite, type, row, col, z)));
+                  _results3.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
                 }
                 return _results3;
               }).call(this));
@@ -183,7 +180,7 @@
                 var _ref5, _results4, _step3;
                 _results4 = [];
                 for (col = 1, _ref5 = map.height - 2, _step3 = 2; 1 <= _ref5 ? col <= _ref5 : col >= _ref5; col += _step3) {
-                  _results4.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, z))) : void 0);
+                  _results4.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], green = parseInt(m[row][col][1], 16), z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z))) : void 0);
                 }
                 return _results4;
               }).call(this));
@@ -195,11 +192,12 @@
     return Map;
   })();
   Tile = (function() {
-    function Tile(sprite, type, row, col, z) {
+    function Tile(sprite, type, row, col, green, z) {
       this.sprite = sprite;
       this.type = type;
       this.row = row;
       this.col = col;
+      this.green = green != null ? green : 0;
       this.z = z != null ? z : 0;
     }
     Tile.prototype.render = function(ctx) {
@@ -377,10 +375,10 @@
     State.prototype.draw = function() {};
     return State;
   })();
-  StateIntro = (function() {
+  document.stateclass["intro"] = StateIntro = (function() {
     __extends(StateIntro, State);
     function StateIntro() {
-      var beach3d, i, maze, _fn;
+      var beach3d, i, maze, simple, _fn;
       beach3d = new Sprite({
         "texture": "assets/images/beach3d.png",
         "width": 107,
@@ -431,11 +429,21 @@
           "dd000000": 17
         }
       });
+      simple = new Sprite({
+        "texture": "assets/images/beach3d.png",
+        "width": 107,
+        "height": 107,
+        "innerWidth": 87,
+        "innerHeight": 87,
+        "key": {
+          "00": 12,
+          "dd": 12
+        }
+      });
       this.background = new Map({
-        "map": "assets/minimap.png",
-        "overlap": 87,
-        "pattern": "square",
-        "sprite": beach3d
+        "map": "assets/maze.png",
+        "pattern": "cross",
+        "sprite": maze
       });
       this.spaceships = [];
       _fn = __bind(function(i) {
@@ -472,7 +480,7 @@
     };
     return StateIntro;
   })();
-  StateMain = (function() {
+  document.stateclass["main"] = StateMain = (function() {
     __extends(StateMain, State);
     function StateMain() {}
     StateMain.prototype.update = function() {};
@@ -480,18 +488,17 @@
     return StateMain;
   })();
   Statemanager = (function() {
-    function Statemanager() {
+    function Statemanager(states) {
+      var state, _i, _len;
       this.statearray = {};
       this.currentState = null;
+      for (_i = 0, _len = states.length; _i < _len; _i++) {
+        state = states[_i];
+        this.addState(state);
+      }
     }
     Statemanager.prototype.addState = function(state) {
-      switch (state) {
-        case "intro":
-          this.statearray[state] = new StateIntro;
-          break;
-        case "main":
-          this.statearray[state] = new StateMain;
-      }
+      this.statearray[state] = new document.stateclass[state];
       if (this.currentState == null) {
         return this.setState(state);
       }

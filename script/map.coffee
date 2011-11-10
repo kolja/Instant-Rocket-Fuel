@@ -33,26 +33,29 @@ class Map
         when "simple"
           for row in [0..map.width-1] 
             for col in [0..map.height-1]
-              type = m[row][col][0]
-              z = parseInt( m[row][col][2], 16 )
-              @tiles.push( new Tile( @sprite, type, row, col, z ))
+              type = "#{m[row][col][0]}"
+              green = parseInt( m[row][col][1], 16 )
+              z = parseInt( m[row][col][2], 16 )            
+              @tiles.push( new Tile( @sprite, type, row, col, green, z ))
         when "square"
           for row in [0..map.width-2] 
             for col in [0..map.height-2]
               type = "#{m[row][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row+1][col+1][0]}"
+              green = parseInt( m[row][col][1], 16 )
               z = parseInt( m[row][col][2], 16 )
-              @tiles.push( new Tile( @sprite, type, row, col, z ))
+              @tiles.push( new Tile( @sprite, type, row, col, green, z ))
         when "cross"
           for row in [1..map.width-2] by 2
             for col in [1..map.height-2] by 2
               unless m[row][col][0] is "00"
                 type = "#{m[row-1][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row][col-1][0]}"
+                green = parseInt( m[row][col][1], 16 )
                 z = parseInt( m[row][col][2], 16 )
-                @tiles.push( new Tile( @sprite, type, row/2, col/2, z ))
+                @tiles.push( new Tile( @sprite, type, row/2, col/2, green, z ))
       
 
 class Tile
-  constructor: (@sprite, @type, @row, @col, @z=0) ->
+  constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
     
   render: (ctx) ->
     ctx.save()
