@@ -1,5 +1,5 @@
 
-document.stateclass["intro"] = class StateIntro extends State
+stateclass["intro"] = class StateIntro extends State
   constructor: ->
     beach3d = new Sprite
       "texture": "assets/images/beach3d.png"

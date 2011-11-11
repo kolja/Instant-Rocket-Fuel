@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, Game, Map, Shape, Spaceship, Sprite, State, StateIntro, StateMain, Statemanager, Tile, Timer, Vector, root;
+  var Animation, Asteroids, Background, Game, Map, Shape, Spaceship, Sprite, State, StateIntro, StateMain, Statemanager, Tile, Timer, Vector, root, stateclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -9,7 +9,7 @@
     return child;
   };
   root = this;
-  document.stateclass = {};
+  stateclass = {};
   Array.prototype.shuffle = function() {
     return this.sort(function() {
       return 0.5 - Math.random();
@@ -60,44 +60,6 @@
     };
     return Game;
   })();
-  Asteroids = (function() {
-    __extends(Asteroids, Game);
-    function Asteroids(width, height) {
-      Asteroids.__super__.constructor.call(this, width, height);
-      this.stateManager = new Statemanager(["intro", "main"]);
-      $("html").keypress(__bind(function(event) {
-        var directions;
-        console.log(event);
-        return directions = {
-          37: "left",
-          38: "up",
-          39: "right",
-          40: "down",
-          32: "space"
-        };
-      }, this));
-    }
-    Asteroids.prototype.update = function() {
-      Asteroids.__super__.update.call(this);
-      return this.stateManager.currentState.update(this.timer.delta);
-    };
-    Asteroids.prototype.render = function() {
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      this.ctx.save();
-      this.ctx.scale(1, 0.5);
-      this.ctx.rotate(Math.PI / 4);
-      this.ctx.translate(200, -400);
-      this.stateManager.currentState.render(this.ctx);
-      this.ctx.restore();
-      return Asteroids.__super__.render.call(this);
-    };
-    return Asteroids;
-  })();
-  $(function() {
-    var asteroids;
-    asteroids = new Asteroids(1024, 768);
-    return asteroids.start();
-  });
   Map = (function() {
     function Map(hash) {
       this.map = hash["map"];
@@ -207,56 +169,6 @@
       return ctx.restore();
     };
     return Tile;
-  })();
-  Spaceship = (function() {
-    function Spaceship() {
-      this.state = "normal";
-      this.sprite = new Sprite({
-        "texture": "assets/images/test.png",
-        "width": 50,
-        "height": 50
-      });
-      this.sprite.addAnimation("normal", {
-        frames: [0, 1, 2, 3, 4].shuffle(),
-        fps: 3,
-        loop: true,
-        callback: this.hello
-      });
-      this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
-      this.speed = new Vector(0.1, 0.1);
-      if (Math.random() > 0.5) {
-        this.speed = this.speed.mult(-1);
-      }
-    }
-    Spaceship.prototype.update = function(delta) {
-      this.coor = this.coor.add(this.speed.mult(delta));
-      if (this.coor.x > 1024) {
-        this.speed.x = this.speed.x * -1;
-        this.coor.x = 1024;
-      }
-      if (this.coor.x < 0) {
-        this.speed.x = this.speed.x * -1;
-        this.coor.x = 0;
-      }
-      if (this.coor.y > 768) {
-        this.speed.y = this.speed.y * -1;
-        this.coor.y = 768;
-      }
-      if (this.coor.y < 0) {
-        this.speed.y = this.speed.y * -1;
-        return this.coor.y = 0;
-      }
-    };
-    Spaceship.prototype.render = function(ctx) {
-      ctx.save();
-      ctx.translate(this.coor.x, this.coor.y);
-      this.sprite.render(this.state, ctx);
-      return ctx.restore();
-    };
-    Spaceship.prototype.hello = function() {
-      return console.log("hello!");
-    };
-    return Spaceship;
   })();
   Background = (function() {
     function Background() {
@@ -375,118 +287,6 @@
     State.prototype.draw = function() {};
     return State;
   })();
-  document.stateclass["intro"] = StateIntro = (function() {
-    __extends(StateIntro, State);
-    function StateIntro() {
-      var beach3d, i, maze, simple, _fn;
-      beach3d = new Sprite({
-        "texture": "assets/images/beach3d.png",
-        "width": 107,
-        "height": 107,
-        "innerWidth": 87,
-        "innerHeight": 87,
-        "key": {
-          "dd00dddd": 0,
-          "00dddddd": 1,
-          "dddd00dd": 2,
-          "dddddd00": 3,
-          "dd00dd00": 4,
-          "0000dddd": 5,
-          "00dd00dd": 6,
-          "dddd0000": 7,
-          "0000dd00": 8,
-          "000000dd": 9,
-          "00dd0000": 10,
-          "dd000000": 11,
-          "dddddddd": 12,
-          "00000000": 13,
-          "dd0000dd": 14,
-          "00dddd00": 15
-        }
-      });
-      maze = new Sprite({
-        "texture": "assets/images/walls.png",
-        "width": 100,
-        "height": 100,
-        "innerWidth": 50,
-        "innerHeight": 50,
-        "key": {
-          "dddddddd": 0,
-          "dd00dddd": 1,
-          "dddd00dd": 2,
-          "dddddd00": 3,
-          "00dddddd": 4,
-          "00000000": 5,
-          "00dddd00": 6,
-          "0000dddd": 7,
-          "dd0000dd": 8,
-          "dddd0000": 9,
-          "00dd00dd": 12,
-          "dd00dd00": 13,
-          "00dd0000": 14,
-          "0000dd00": 15,
-          "000000dd": 16,
-          "dd000000": 17
-        }
-      });
-      simple = new Sprite({
-        "texture": "assets/images/beach3d.png",
-        "width": 107,
-        "height": 107,
-        "innerWidth": 87,
-        "innerHeight": 87,
-        "key": {
-          "00": 12,
-          "dd": 12
-        }
-      });
-      this.background = new Map({
-        "map": "assets/maze.png",
-        "pattern": "cross",
-        "sprite": maze
-      });
-      this.spaceships = [];
-      _fn = __bind(function(i) {
-        return this.spaceships[i] = new Spaceship;
-      }, this);
-      for (i = 0; i <= 3; i++) {
-        _fn(i);
-      }
-    }
-    StateIntro.prototype.update = function(delta) {
-      var spaceship, _i, _len, _ref, _results;
-      _ref = this.spaceships;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        spaceship = _ref[_i];
-        _results.push(__bind(function(spaceship) {
-          return spaceship.update(delta);
-        }, this)(spaceship));
-      }
-      return _results;
-    };
-    StateIntro.prototype.render = function(ctx) {
-      var spaceship, _i, _len, _ref, _results;
-      this.background.render(ctx);
-      _ref = this.spaceships;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        spaceship = _ref[_i];
-        _results.push(__bind(function(spaceship) {
-          return spaceship.render(ctx);
-        }, this)(spaceship));
-      }
-      return _results;
-    };
-    return StateIntro;
-  })();
-  document.stateclass["main"] = StateMain = (function() {
-    __extends(StateMain, State);
-    function StateMain() {}
-    StateMain.prototype.update = function() {};
-    StateMain.prototype.render = function() {};
-    return StateMain;
-  })();
   Statemanager = (function() {
     function Statemanager(states) {
       var state, _i, _len;
@@ -498,7 +298,7 @@
       }
     }
     Statemanager.prototype.addState = function(state) {
-      this.statearray[state] = new document.stateclass[state];
+      this.statearray[state] = new stateclass[state];
       if (this.currentState == null) {
         return this.setState(state);
       }
@@ -612,5 +412,205 @@
       return "(" + this.x + ", " + this.y + ")";
     };
     return Vector;
+  })();
+  Asteroids = (function() {
+    __extends(Asteroids, Game);
+    function Asteroids(width, height) {
+      Asteroids.__super__.constructor.call(this, width, height);
+      this.stateManager = new Statemanager(["intro", "main"]);
+      $("html").keypress(__bind(function(event) {
+        var directions;
+        console.log(event);
+        return directions = {
+          37: "left",
+          38: "up",
+          39: "right",
+          40: "down",
+          32: "space"
+        };
+      }, this));
+    }
+    Asteroids.prototype.update = function() {
+      Asteroids.__super__.update.call(this);
+      return this.stateManager.currentState.update(this.timer.delta);
+    };
+    Asteroids.prototype.render = function() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.ctx.save();
+      this.ctx.scale(1, 0.5);
+      this.ctx.rotate(Math.PI / 4);
+      this.ctx.translate(200, -400);
+      this.stateManager.currentState.render(this.ctx);
+      this.ctx.restore();
+      return Asteroids.__super__.render.call(this);
+    };
+    return Asteroids;
+  })();
+  $(function() {
+    var asteroids;
+    asteroids = new Asteroids(1024, 768);
+    return asteroids.start();
+  });
+  stateclass["intro"] = StateIntro = (function() {
+    __extends(StateIntro, State);
+    function StateIntro() {
+      var beach3d, i, maze, simple, _fn;
+      beach3d = new Sprite({
+        "texture": "assets/images/beach3d.png",
+        "width": 107,
+        "height": 107,
+        "innerWidth": 87,
+        "innerHeight": 87,
+        "key": {
+          "dd00dddd": 0,
+          "00dddddd": 1,
+          "dddd00dd": 2,
+          "dddddd00": 3,
+          "dd00dd00": 4,
+          "0000dddd": 5,
+          "00dd00dd": 6,
+          "dddd0000": 7,
+          "0000dd00": 8,
+          "000000dd": 9,
+          "00dd0000": 10,
+          "dd000000": 11,
+          "dddddddd": 12,
+          "00000000": 13,
+          "dd0000dd": 14,
+          "00dddd00": 15
+        }
+      });
+      maze = new Sprite({
+        "texture": "assets/images/walls.png",
+        "width": 100,
+        "height": 100,
+        "innerWidth": 50,
+        "innerHeight": 50,
+        "key": {
+          "dddddddd": 0,
+          "dd00dddd": 1,
+          "dddd00dd": 2,
+          "dddddd00": 3,
+          "00dddddd": 4,
+          "00000000": 5,
+          "00dddd00": 6,
+          "0000dddd": 7,
+          "dd0000dd": 8,
+          "dddd0000": 9,
+          "00dd00dd": 12,
+          "dd00dd00": 13,
+          "00dd0000": 14,
+          "0000dd00": 15,
+          "000000dd": 16,
+          "dd000000": 17
+        }
+      });
+      simple = new Sprite({
+        "texture": "assets/images/beach3d.png",
+        "width": 107,
+        "height": 107,
+        "innerWidth": 87,
+        "innerHeight": 87,
+        "key": {
+          "00": 12,
+          "dd": 12
+        }
+      });
+      this.background = new Map({
+        "map": "assets/maze.png",
+        "pattern": "cross",
+        "sprite": maze
+      });
+      this.spaceships = [];
+      _fn = __bind(function(i) {
+        return this.spaceships[i] = new Spaceship;
+      }, this);
+      for (i = 0; i <= 3; i++) {
+        _fn(i);
+      }
+    }
+    StateIntro.prototype.update = function(delta) {
+      var spaceship, _i, _len, _ref, _results;
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(__bind(function(spaceship) {
+          return spaceship.update(delta);
+        }, this)(spaceship));
+      }
+      return _results;
+    };
+    StateIntro.prototype.render = function(ctx) {
+      var spaceship, _i, _len, _ref, _results;
+      this.background.render(ctx);
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(__bind(function(spaceship) {
+          return spaceship.render(ctx);
+        }, this)(spaceship));
+      }
+      return _results;
+    };
+    return StateIntro;
+  })();
+  stateclass["main"] = StateMain = (function() {
+    __extends(StateMain, State);
+    function StateMain() {}
+    StateMain.prototype.update = function() {};
+    StateMain.prototype.render = function() {};
+    return StateMain;
+  })();
+  Spaceship = (function() {
+    function Spaceship() {
+      this.state = "normal";
+      this.sprite = new Sprite({
+        "texture": "assets/images/test.png",
+        "width": 50,
+        "height": 50
+      });
+      this.sprite.addAnimation("normal", {
+        frames: [0, 1, 2, 3, 4].shuffle(),
+        fps: 3,
+        loop: true,
+        callback: this.hello
+      });
+      this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
+      this.speed = new Vector(0.1, 0.1);
+      if (Math.random() > 0.5) {
+        this.speed = this.speed.mult(-1);
+      }
+    }
+    Spaceship.prototype.update = function(delta) {
+      this.coor = this.coor.add(this.speed.mult(delta));
+      if (this.coor.x > 1024) {
+        this.speed.x = this.speed.x * -1;
+        this.coor.x = 1024;
+      }
+      if (this.coor.x < 0) {
+        this.speed.x = this.speed.x * -1;
+        this.coor.x = 0;
+      }
+      if (this.coor.y > 768) {
+        this.speed.y = this.speed.y * -1;
+        this.coor.y = 768;
+      }
+      if (this.coor.y < 0) {
+        this.speed.y = this.speed.y * -1;
+        return this.coor.y = 0;
+      }
+    };
+    Spaceship.prototype.render = function(ctx) {
+      ctx.save();
+      ctx.translate(this.coor.x, this.coor.y);
+      this.sprite.render(this.state, ctx);
+      return ctx.restore();
+    };
+    Spaceship.prototype.hello = function() {
+      return console.log("hello!");
+    };
+    return Spaceship;
   })();
 }).call(this);

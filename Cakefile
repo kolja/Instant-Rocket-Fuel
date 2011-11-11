@@ -1,25 +1,28 @@
 fs     = require 'fs'
 {exec} = require 'child_process'
 
-appFiles  = [
-  'helpers'
-  'game'
+libFiles  = [
+  'lib/helpers'
+  'lib/game'
+  'lib/map'
+  'lib/background'
+  'lib/sprite'
+  'lib/state'
+  'lib/statemanager'
+  'lib/timer'
+  'lib/vector'
+]
+appFiles = [
   'asteroids'
-  'map'
-  'spaceship'
-  'background'
-  'sprite'
-  'state'
   'state_intro'
   'state_main'
-  'statemanager'
-  'timer'
-  'vector'
+  'spaceship'
 ]
 
 task 'build:coffee', 'Build single application file from source files', ->
-  appContents = new Array remaining = appFiles.length
-  for file, index in appFiles then do (file, index) ->
+  files = libFiles.concat appFiles
+  appContents = new Array remaining = files.length
+  for file, index in files then do (file, index) ->
     fs.readFile "script/#{file}.coffee", 'utf8', (err, fileContents) ->
       throw err if err
       appContents[index] = fileContents

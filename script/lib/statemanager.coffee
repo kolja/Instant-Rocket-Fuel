@@ -1,5 +1,4 @@
 class Statemanager
-  
   constructor: (states) ->
     @statearray = {}
     @currentState = null
@@ -7,7 +6,7 @@ class Statemanager
       @addState state
     
   addState: (state) ->   
-    @statearray[state] = new document.stateclass[state]     
+    @statearray[state] = new stateclass[state]     
     @setState state unless @currentState? # when a state is added for the first time, it automatically becomes the @currentState
 
   setState: (state) ->
