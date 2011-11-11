@@ -288,8 +288,9 @@
     return State;
   })();
   Statemanager = (function() {
-    function Statemanager(states) {
+    function Statemanager(parent, states) {
       var state, _i, _len;
+      this.parent = parent;
       this.statearray = {};
       this.currentState = null;
       for (_i = 0, _len = states.length; _i < _len; _i++) {
@@ -298,7 +299,7 @@
       }
     }
     Statemanager.prototype.addState = function(state) {
-      this.statearray[state] = new stateclass[state];
+      this.statearray[state] = new stateclass[state](this.parent);
       if (this.currentState == null) {
         return this.setState(state);
       }
@@ -417,7 +418,7 @@
     __extends(Asteroids, Game);
     function Asteroids(width, height) {
       Asteroids.__super__.constructor.call(this, width, height);
-      this.stateManager = new Statemanager(["intro", "main"]);
+      this.stateManager = new Statemanager(this, ["intro", "main"]);
       $("html").keypress(__bind(function(event) {
         var directions;
         console.log(event);
@@ -453,8 +454,10 @@
   });
   stateclass["intro"] = StateIntro = (function() {
     __extends(StateIntro, State);
-    function StateIntro() {
+    function StateIntro(parent) {
       var beach3d, i, maze, simple, _fn;
+      this.parent = parent;
+      console.log("width: " + this.parent.width + " -- height: " + this.parent.height);
       beach3d = new Sprite({
         "texture": "assets/images/beach3d.png",
         "width": 107,

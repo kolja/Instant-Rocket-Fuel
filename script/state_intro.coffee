@@ -1,6 +1,9 @@
 
 stateclass["intro"] = class StateIntro extends State
-  constructor: ->
+  constructor: (@parent) ->
+    
+    console.log "width: #{@parent.width} -- height: #{@parent.height}"
+    
     beach3d = new Sprite
       "texture": "assets/images/beach3d.png"
       "width": 107

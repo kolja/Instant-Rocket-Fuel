@@ -8,7 +8,7 @@ class Asteroids extends Game
   constructor: (width, height) ->
     super width, height
     
-    @stateManager = new Statemanager ["intro", "main"] # Add your own Gamestates or Levels
+    @stateManager = new Statemanager this, ["intro", "main"] # Add your own Gamestates or Levels
     
     $("html").keypress (event) =>
       console.log event

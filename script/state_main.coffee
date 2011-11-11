@@ -1,7 +1,7 @@
 
 
 stateclass["main"] = class StateMain extends State
-  constructor: ->
+  constructor: (@parent) ->
     
   update: ->
     
