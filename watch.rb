@@ -4,7 +4,7 @@ require 'directory_watcher'
 
 dw = DirectoryWatcher.new '.'
 dw.interval = 1.0
-dw.glob = 'script/*.coffee'
+dw.glob = 'script/**/*.coffee'
 dw.reset true
 dw.add_observer do |*args| 
   args.each do |event|

@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, Game, Map, Shape, Spaceship, Sprite, State, StateIntro, StateMain, Statemanager, Tile, Timer, Vector, root, stateclass;
+  var Animation, Asteroids, Background, Camera, Game, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -26,6 +26,111 @@
     }
     return hex;
   };
+  Timer = (function() {
+    function Timer() {
+      this.last_time = new Date().getTime();
+      this.delta = 0;
+    }
+    Timer.prototype.punch = function() {
+      var this_time;
+      this_time = new Date().getTime();
+      this.delta = this_time - this.last_time;
+      this.last_time = this_time;
+      return this.delta;
+    };
+    Timer.prototype.timeSinceLastPunch = function() {
+      var this_time;
+      this_time = new Date().getTime();
+      return this_time - this.last_time;
+    };
+    Timer.prototype.fps = function() {
+      return 1000 / this.delta;
+    };
+    return Timer;
+  })();
+  Vector = (function() {
+    function Vector(x, y) {
+      if (x == null) {
+        x = 0;
+      }
+      if (y == null) {
+        y = 0;
+      }
+      this.x = x;
+      this.y = y;
+    }
+    Vector.prototype.clone = function() {
+      return new Vector(this.x, this.y);
+    };
+    Vector.prototype.add = function(vec) {
+      return new Vector(this.x + vec.x, this.y + vec.y);
+    };
+    Vector.prototype.subtract = function(vec) {
+      return new Vector(this.x - vec.x, this.y - vec.y);
+    };
+    Vector.prototype.mult = function(num) {
+      return new Vector(this.x * num, this.y * num);
+    };
+    Vector.prototype.length = function() {
+      return Math.sqrt(this.x * this.x + this.y * this.y);
+    };
+    Vector.prototype.lengthSquared = function() {
+      return this.x * this.x + this.y * this.y;
+    };
+    Vector.prototype.norm = function(factor) {
+      var l;
+      if (factor == null) {
+        factor = 1;
+      }
+      l = this.length();
+      if (l > 0) {
+        return this.mult(factor / l);
+      } else {
+        return null;
+      }
+    };
+    Vector.prototype.scalarProduct = function(vec) {
+      return this.x * vec.x + this.y * vec.y;
+    };
+    Vector.prototype.sameDirection = function(vec) {
+      if (this.lengthSquared() < this.add(vec).lengthSquared()) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    Vector.prototype.angleWith = function(vec) {
+      return Math.acos(this.scalarProduct(vec) / this.length() * vec.length());
+    };
+    Vector.prototype.vectorProduct = function(vec) {
+      return this;
+    };
+    Vector.prototype.projectTo = function(vec) {
+      return vec.mult(this.scalarProduct(vec) / vec.lengthSquared());
+    };
+    Vector.intersecting = function(oa, a, ob, b) {
+      var c, col, l, m, mu, mult, n;
+      c = ob.subtract(oa);
+      b = b.mult(-1);
+      col = [];
+      col[0] = a.clone();
+      col[1] = b.clone();
+      col[2] = c.clone();
+      l = 0;
+      m = 1;
+      n = 2;
+      mult = col[0].y / col[0].x;
+      col[0].y = 0;
+      col[1].y = col[1].y - (mult * col[1].x);
+      col[2].y = col[2].y - (mult * col[2].x);
+      mu = col[n].y / col[m].y;
+      return ob.subtract(b.mult(mu));
+    };
+    Vector.prototype.print = function() {
+      return "(" + this.x + ", " + this.y + ")";
+    };
+    return Vector;
+  })();
   Game = (function() {
     function Game(width, height) {
       var canvas;
@@ -103,11 +208,11 @@
         switch (pattern) {
           case "simple":
             _results = [];
-            for (row = 0, _ref2 = map.width - 1; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
+            for (row = 0, _ref2 = map.height - 1; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
               _results.push((function() {
                 var _ref3, _results2;
                 _results2 = [];
-                for (col = 0, _ref3 = map.height - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
+                for (col = 0, _ref3 = map.width - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
                   type = "" + m[row][col][0];
                   green = parseInt(m[row][col][1], 16);
                   z = parseInt(m[row][col][2], 16);
@@ -120,11 +225,11 @@
             break;
           case "square":
             _results2 = [];
-            for (row = 0, _ref3 = map.width - 2; 0 <= _ref3 ? row <= _ref3 : row >= _ref3; 0 <= _ref3 ? row++ : row--) {
+            for (row = 0, _ref3 = map.height - 2; 0 <= _ref3 ? row <= _ref3 : row >= _ref3; 0 <= _ref3 ? row++ : row--) {
               _results2.push((function() {
                 var _ref4, _results3;
                 _results3 = [];
-                for (col = 0, _ref4 = map.height - 2; 0 <= _ref4 ? col <= _ref4 : col >= _ref4; 0 <= _ref4 ? col++ : col--) {
+                for (col = 0, _ref4 = map.width - 2; 0 <= _ref4 ? col <= _ref4 : col >= _ref4; 0 <= _ref4 ? col++ : col--) {
                   type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
                   green = parseInt(m[row][col][1], 16);
                   z = parseInt(m[row][col][2], 16);
@@ -137,11 +242,11 @@
             break;
           case "cross":
             _results3 = [];
-            for (row = 1, _ref4 = map.width - 2, _step2 = 2; 1 <= _ref4 ? row <= _ref4 : row >= _ref4; row += _step2) {
+            for (row = 1, _ref4 = map.height - 2, _step2 = 2; 1 <= _ref4 ? row <= _ref4 : row >= _ref4; row += _step2) {
               _results3.push((function() {
                 var _ref5, _results4, _step3;
                 _results4 = [];
-                for (col = 1, _ref5 = map.height - 2, _step3 = 2; 1 <= _ref5 ? col <= _ref5 : col >= _ref5; col += _step3) {
+                for (col = 1, _ref5 = map.width - 2, _step3 = 2; 1 <= _ref5 ? col <= _ref5 : col >= _ref5; col += _step3) {
                   _results4.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], green = parseInt(m[row][col][1], 16), z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z))) : void 0);
                 }
                 return _results4;
@@ -171,13 +276,8 @@
     return Tile;
   })();
   Background = (function() {
-    function Background() {
-      this.sprite = new Sprite({
-        "texture": "assets/images/weltraum.jpg",
-        "width": 500,
-        "height": 500,
-        "texWidth": 500
-      });
+    function Background(sprite) {
+      this.sprite = sprite;
       this.sprite.addImage("background", 0);
     }
     Background.prototype.render = function(ctx) {
@@ -309,116 +409,23 @@
     };
     return Statemanager;
   })();
-  Timer = (function() {
-    function Timer() {
-      this.last_time = new Date().getTime();
-      this.delta = 0;
-    }
-    Timer.prototype.punch = function() {
-      var this_time;
-      this_time = new Date().getTime();
-      this.delta = this_time - this.last_time;
-      this.last_time = this_time;
-      return this.delta;
-    };
-    Timer.prototype.timeSinceLastPunch = function() {
-      var this_time;
-      this_time = new Date().getTime();
-      return this_time - this.last_time;
-    };
-    Timer.prototype.fps = function() {
-      return 1000 / this.delta;
-    };
-    return Timer;
-  })();
-  Vector = (function() {
-    function Vector(x, y) {
-      if (x == null) {
-        x = 0;
+  Camera = (function() {
+    function Camera() {
+      var direction, _i, _len, _ref;
+      this.state = "normal";
+      this.sprite = new Sprite({
+        "texture": "assets/images/test.png",
+        "width": 50,
+        "height": 50
+      });
+      _ref = ['left', 'up', 'right', 'down', 'space'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        direction = _ref[_i];
+        this.key[direction] = false;
       }
-      if (y == null) {
-        y = 0;
-      }
-      this.x = x;
-      this.y = y;
-    }
-    Vector.prototype.clone = function() {
-      return new Vector(this.x, this.y);
-    };
-    Vector.prototype.add = function(vec) {
-      return new Vector(this.x + vec.x, this.y + vec.y);
-    };
-    Vector.prototype.subtract = function(vec) {
-      return new Vector(this.x - vec.x, this.y - vec.y);
-    };
-    Vector.prototype.mult = function(num) {
-      return new Vector(this.x * num, this.y * num);
-    };
-    Vector.prototype.length = function() {
-      return Math.sqrt(this.x * this.x + this.y * this.y);
-    };
-    Vector.prototype.lengthSquared = function() {
-      return this.x * this.x + this.y * this.y;
-    };
-    Vector.prototype.norm = function(factor) {
-      var l;
-      if (factor == null) {
-        factor = 1;
-      }
-      l = this.length();
-      if (l > 0) {
-        return this.mult(factor / l);
-      } else {
-        return null;
-      }
-    };
-    Vector.prototype.scalarProduct = function(vec) {
-      return this.x * vec.x + this.y * vec.y;
-    };
-    Vector.prototype.sameDirection = function(vec) {
-      if (this.lengthSquared() < this.add(vec).lengthSquared()) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-    Vector.prototype.angleWith = function(vec) {
-      return Math.acos(this.scalarProduct(vec) / this.length() * vec.length());
-    };
-    Vector.prototype.vectorProduct = function(vec) {
-      return this;
-    };
-    Vector.prototype.projectTo = function(vec) {
-      return vec.mult(this.scalarProduct(vec) / vec.lengthSquared());
-    };
-    Vector.intersecting = function(oa, a, ob, b) {
-      var c, col, l, m, mu, mult, n;
-      c = ob.subtract(oa);
-      b = b.mult(-1);
-      col = [];
-      col[0] = a.clone();
-      col[1] = b.clone();
-      col[2] = c.clone();
-      l = 0;
-      m = 1;
-      n = 2;
-      mult = col[0].y / col[0].x;
-      col[0].y = 0;
-      col[1].y = col[1].y - (mult * col[1].x);
-      col[2].y = col[2].y - (mult * col[2].x);
-      mu = col[n].y / col[m].y;
-      return ob.subtract(b.mult(mu));
-    };
-    Vector.prototype.print = function() {
-      return "(" + this.x + ", " + this.y + ")";
-    };
-    return Vector;
-  })();
-  Asteroids = (function() {
-    __extends(Asteroids, Game);
-    function Asteroids(width, height) {
-      Asteroids.__super__.constructor.call(this, width, height);
-      this.stateManager = new Statemanager(this, ["intro", "main"]);
+      this.sprite.addImage("normal", 4);
+      this.coor = new Vector(100, 100);
+      this.speed = new Vector(0.1, 0.1);
       $("html").bind("keydown", __bind(function(event) {
         var directions;
         directions = {
@@ -428,8 +435,30 @@
           40: "down",
           32: "space"
         };
-        return console.log(directions[event.which]);
+        this.key[directions[event.which]] = true;
+        return console.log(event.which);
       }, this));
+    }
+    Camera.prototype.update = function(delta) {
+      return this.coor = this.coor.add(this.speed.mult(delta));
+    };
+    Camera.prototype.render = function(ctx) {
+      ctx.save();
+      ctx.translate(this.coor.x, this.coor.y);
+      this.sprite.render(this.state, ctx);
+      return ctx.restore();
+    };
+    Camera.prototype.hello = function() {
+      return console.log("hello!");
+    };
+    return Camera;
+  })();
+  Asteroids = (function() {
+    __extends(Asteroids, Game);
+    function Asteroids(width, height) {
+      Asteroids.__super__.constructor.call(this, width, height);
+      this.stateManager = new Statemanager(this, ["bigbg", "jumpnrun", "iso", "maze", "height"]);
+      this.stateManager.setState("jumpnrun");
     }
     Asteroids.prototype.update = function() {
       Asteroids.__super__.update.call(this);
@@ -437,12 +466,7 @@
     };
     Asteroids.prototype.render = function() {
       this.ctx.clearRect(0, 0, this.width, this.height);
-      this.ctx.save();
-      this.ctx.scale(1, 0.5);
-      this.ctx.rotate(Math.PI / 4);
-      this.ctx.translate(200, -400);
       this.stateManager.currentState.render(this.ctx);
-      this.ctx.restore();
       return Asteroids.__super__.render.call(this);
     };
     return Asteroids;
@@ -452,12 +476,79 @@
     asteroids = new Asteroids(1024, 768);
     return asteroids.start();
   });
-  stateclass["intro"] = StateIntro = (function() {
-    __extends(StateIntro, State);
-    function StateIntro(parent) {
-      var beach3d, i, maze, simple;
+  stateclass["bigbg"] = StateBigBackground = (function() {
+    __extends(StateBigBackground, State);
+    function StateBigBackground(parent) {
+      var backgroundsprite, i;
       this.parent = parent;
       console.log("width: " + this.parent.width + " -- height: " + this.parent.height);
+      backgroundsprite = new Sprite({
+        "texture": "assets/images/weltraum.jpg",
+        "width": 500,
+        "height": 500
+      });
+      this.background = new Background(backgroundsprite);
+      this.spaceships = [];
+      for (i = 0; i <= 3; i++) {
+        this.spaceships[i] = new Spaceship;
+      }
+    }
+    StateBigBackground.prototype.update = function(delta) {
+      var spaceship, _i, _len, _ref, _results;
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(spaceship.update(delta));
+      }
+      return _results;
+    };
+    StateBigBackground.prototype.render = function(ctx) {
+      var spaceship, _i, _len, _ref, _results;
+      this.background.render(ctx);
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(spaceship.render(ctx));
+      }
+      return _results;
+    };
+    return StateBigBackground;
+  })();
+  stateclass["height"] = StateHeight = (function() {
+    __extends(StateHeight, State);
+    function StateHeight(parent) {
+      var simple;
+      this.parent = parent;
+      simple = new Sprite({
+        "texture": "assets/images/beach3d.png",
+        "width": 107,
+        "height": 107,
+        "innerWidth": 87,
+        "innerHeight": 87,
+        "key": {
+          "00": 12,
+          "dd": 12
+        }
+      });
+      this.background = new Map({
+        "map": "assets/minimap.png",
+        "pattern": "simple",
+        "sprite": simple
+      });
+    }
+    StateHeight.prototype.update = function(delta) {};
+    StateHeight.prototype.render = function(ctx) {
+      return this.background.render(ctx);
+    };
+    return StateHeight;
+  })();
+  stateclass["iso"] = StateIso = (function() {
+    __extends(StateIso, State);
+    function StateIso(parent) {
+      var beach3d;
+      this.parent = parent;
       beach3d = new Sprite({
         "texture": "assets/images/beach3d.png",
         "width": 107,
@@ -483,6 +574,82 @@
           "00dddd00": 15
         }
       });
+      this.background = new Map({
+        "map": "assets/map.png",
+        "pattern": "square",
+        "sprite": beach3d
+      });
+    }
+    StateIso.prototype.update = function(delta) {};
+    StateIso.prototype.render = function(ctx) {
+      return this.background.render(ctx);
+    };
+    return StateIso;
+  })();
+  stateclass["jumpnrun"] = StateJumpNRun = (function() {
+    __extends(StateJumpNRun, State);
+    function StateJumpNRun(parent) {
+      var i, jumpnrunSprite;
+      this.parent = parent;
+      jumpnrunSprite = new Sprite({
+        "texture": "assets/images/jumpnrun.png",
+        "width": 100,
+        "height": 100,
+        "innerWidth": 95,
+        "innerHeight": 95,
+        "key": {
+          "00": 0,
+          "11": 1,
+          '22': 2,
+          "33": 3,
+          "44": 4,
+          '55': 5,
+          "66": 6,
+          "77": 7,
+          '88': 8,
+          "99": 9,
+          "aa": 10,
+          'bb': 11
+        }
+      });
+      this.background = new Map({
+        "map": "assets/jumpnrun_map.png",
+        "pattern": "simple",
+        "sprite": jumpnrunSprite
+      });
+      this.spaceships = [];
+      for (i = 0; i <= 3; i++) {
+        this.spaceships[i] = new Spaceship;
+      }
+    }
+    StateJumpNRun.prototype.update = function(delta) {
+      var spaceship, _i, _len, _ref, _results;
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(spaceship.update(delta));
+      }
+      return _results;
+    };
+    StateJumpNRun.prototype.render = function(ctx) {
+      var spaceship, _i, _len, _ref, _results;
+      this.background.render(ctx);
+      _ref = this.spaceships;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        spaceship = _ref[_i];
+        _results.push(spaceship.render(ctx));
+      }
+      return _results;
+    };
+    return StateJumpNRun;
+  })();
+  stateclass["maze"] = StateMaze = (function() {
+    __extends(StateMaze, State);
+    function StateMaze(parent) {
+      var i, maze;
+      this.parent = parent;
       maze = new Sprite({
         "texture": "assets/images/walls.png",
         "width": 100,
@@ -508,17 +675,6 @@
           "dd000000": 17
         }
       });
-      simple = new Sprite({
-        "texture": "assets/images/beach3d.png",
-        "width": 107,
-        "height": 107,
-        "innerWidth": 87,
-        "innerHeight": 87,
-        "key": {
-          "00": 12,
-          "dd": 12
-        }
-      });
       this.background = new Map({
         "map": "assets/maze.png",
         "pattern": "cross",
@@ -529,7 +685,7 @@
         this.spaceships[i] = new Spaceship;
       }
     }
-    StateIntro.prototype.update = function(delta) {
+    StateMaze.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
       _ref = this.spaceships;
       _results = [];
@@ -539,7 +695,7 @@
       }
       return _results;
     };
-    StateIntro.prototype.render = function(ctx) {
+    StateMaze.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
       this.background.render(ctx);
       _ref = this.spaceships;
@@ -550,16 +706,7 @@
       }
       return _results;
     };
-    return StateIntro;
-  })();
-  stateclass["main"] = StateMain = (function() {
-    __extends(StateMain, State);
-    function StateMain(parent) {
-      this.parent = parent;
-    }
-    StateMain.prototype.update = function() {};
-    StateMain.prototype.render = function() {};
-    return StateMain;
+    return StateMaze;
   })();
   Spaceship = (function() {
     function Spaceship() {

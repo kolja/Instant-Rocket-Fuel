@@ -6,26 +6,22 @@
 class Asteroids extends Game
   
   constructor: (width, height) ->
-    super width, height
+    super width, height 
+    @stateManager = new Statemanager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Gamestates or Levels
+    @stateManager.setState "jumpnrun"
     
-    @stateManager = new Statemanager this, ["intro", "main"] # Add your own Gamestates or Levels
-    
-    $("html").bind "keydown", (event) =>
-      directions = {37:"left",38:"up",39:"right",40:"down",32:"space"}
-      console.log directions[event.which]
-      
   update: ->
     super()
     @stateManager.currentState.update @timer.delta
 
   render: ->
     @ctx.clearRect 0, 0, @width, @height
-    @ctx.save()
-    @ctx.scale 1, 0.5
-    @ctx.rotate Math.PI/4
-    @ctx.translate 200, -400
+    #@ctx.save()
+    #@ctx.scale 1, 0.5
+    #@ctx.rotate Math.PI/4
+    #@ctx.translate 200, -400
     @stateManager.currentState.render @ctx
-    @ctx.restore() 
+    #@ctx.restore() 
     super()
     
   

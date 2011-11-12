@@ -3,19 +3,23 @@ fs     = require 'fs'
 
 libFiles  = [
   'lib/helpers'
+  'lib/timer'
+  'lib/vector'
   'lib/game'
   'lib/map'
   'lib/background'
   'lib/sprite'
   'lib/state'
   'lib/statemanager'
-  'lib/timer'
-  'lib/vector'
+  'lib/camera'
 ]
 appFiles = [
   'asteroids'
-  'state_intro'
-  'state_main'
+  'demostate_bigbackground'
+  'demostate_height'
+  'demostate_iso'
+  'demostate_jumpnrun'
+  'demostate_maze'
   'spaceship'
 ]
 

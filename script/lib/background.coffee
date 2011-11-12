@@ -2,13 +2,7 @@
 
 class Background
 
-  constructor: ->
-    @sprite = new Sprite
-      "texture": "assets/images/weltraum.jpg"
-      "width": 500
-      "height": 500
-      "texWidth": 500
-      
+  constructor: (@sprite) ->
     @sprite.addImage "background", 0
   
 
