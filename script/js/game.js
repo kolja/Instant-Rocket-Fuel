@@ -419,16 +419,16 @@
     function Asteroids(width, height) {
       Asteroids.__super__.constructor.call(this, width, height);
       this.stateManager = new Statemanager(this, ["intro", "main"]);
-      $("html").keypress(__bind(function(event) {
+      $("html").bind("keydown", __bind(function(event) {
         var directions;
-        console.log(event);
-        return directions = {
+        directions = {
           37: "left",
           38: "up",
           39: "right",
           40: "down",
           32: "space"
         };
+        return console.log(directions[event.which]);
       }, this));
     }
     Asteroids.prototype.update = function() {
@@ -455,7 +455,7 @@
   stateclass["intro"] = StateIntro = (function() {
     __extends(StateIntro, State);
     function StateIntro(parent) {
-      var beach3d, i, maze, simple, _fn;
+      var beach3d, i, maze, simple;
       this.parent = parent;
       console.log("width: " + this.parent.width + " -- height: " + this.parent.height);
       beach3d = new Sprite({
@@ -525,11 +525,8 @@
         "sprite": maze
       });
       this.spaceships = [];
-      _fn = __bind(function(i) {
-        return this.spaceships[i] = new Spaceship;
-      }, this);
       for (i = 0; i <= 3; i++) {
-        _fn(i);
+        this.spaceships[i] = new Spaceship;
       }
     }
     StateIntro.prototype.update = function(delta) {
@@ -538,9 +535,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         spaceship = _ref[_i];
-        _results.push(__bind(function(spaceship) {
-          return spaceship.update(delta);
-        }, this)(spaceship));
+        _results.push(spaceship.update(delta));
       }
       return _results;
     };
@@ -551,9 +546,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         spaceship = _ref[_i];
-        _results.push(__bind(function(spaceship) {
-          return spaceship.render(ctx);
-        }, this)(spaceship));
+        _results.push(spaceship.render(ctx));
       }
       return _results;
     };
@@ -561,7 +554,9 @@
   })();
   stateclass["main"] = StateMain = (function() {
     __extends(StateMain, State);
-    function StateMain() {}
+    function StateMain(parent) {
+      this.parent = parent;
+    }
     StateMain.prototype.update = function() {};
     StateMain.prototype.render = function() {};
     return StateMain;

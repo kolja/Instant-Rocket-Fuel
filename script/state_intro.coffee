@@ -76,16 +76,13 @@ stateclass["intro"] = class StateIntro extends State
     
     @spaceships = []
     for i in [0..3]
-      do (i) =>
-        @spaceships[i] = new Spaceship
+      @spaceships[i] = new Spaceship
     
   update: (delta) ->
     for spaceship in @spaceships
-      do (spaceship) =>
-        spaceship.update delta
+      spaceship.update delta
     
   render: (ctx) -> 
     @background.render(ctx)
     for spaceship in @spaceships
-      do (spaceship) =>
-        spaceship.render ctx
+      spaceship.render ctx

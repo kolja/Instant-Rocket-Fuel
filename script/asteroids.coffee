@@ -10,9 +10,9 @@ class Asteroids extends Game
     
     @stateManager = new Statemanager this, ["intro", "main"] # Add your own Gamestates or Levels
     
-    $("html").keypress (event) =>
-      console.log event
+    $("html").bind "keydown", (event) =>
       directions = {37:"left",38:"up",39:"right",40:"down",32:"space"}
+      console.log directions[event.which]
       
   update: ->
     super()
