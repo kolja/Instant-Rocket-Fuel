@@ -167,10 +167,9 @@
   })();
   Map = (function() {
     function Map(hash) {
-      this.map = hash["map"];
       this.sprite = hash["sprite"];
       this.tiles = [];
-      this.loadMapDataFromImage(this.map, hash["pattern"]);
+      this.loadMapDataFromImage(hash["mapfile"], hash["pattern"]);
     }
     Map.prototype.render = function(ctx) {
       var tile, _i, _len, _ref, _results;
@@ -256,6 +255,10 @@
         }
       }, this));
     };
+    Map.prototype.tileAtVector = function(vec) {
+      var xIndex;
+      return xIndex = map.width(vec.x);
+    };
     return Map;
   })();
   Tile = (function() {
@@ -267,6 +270,9 @@
       this.green = green != null ? green : 0;
       this.z = z != null ? z : 0;
     }
+    Tile.prototype.isWalkable = function() {
+      return this.green === 0;
+    };
     Tile.prototype.render = function(ctx) {
       ctx.save();
       ctx.translate(this.col * this.sprite.innerWidth - this.z, this.row * this.sprite.innerHeight - this.z);
@@ -533,7 +539,7 @@
         }
       });
       this.background = new Map({
-        "map": "assets/minimap.png",
+        "mapfile": "assets/minimap.png",
         "pattern": "simple",
         "sprite": simple
       });
@@ -575,7 +581,7 @@
         }
       });
       this.background = new Map({
-        "map": "assets/map.png",
+        "mapfile": "assets/map.png",
         "pattern": "square",
         "sprite": beach3d
       });
@@ -613,7 +619,7 @@
         }
       });
       this.background = new Map({
-        "map": "assets/jumpnrun_map.png",
+        "mapfile": "assets/jumpnrun_map.png",
         "pattern": "simple",
         "sprite": jumpnrunSprite
       });
@@ -676,7 +682,7 @@
         }
       });
       this.background = new Map({
-        "map": "assets/maze.png",
+        "mapfile": "assets/maze.png",
         "pattern": "cross",
         "sprite": maze
       });

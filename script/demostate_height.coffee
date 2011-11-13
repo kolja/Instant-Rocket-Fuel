@@ -13,7 +13,7 @@ stateclass["height"] = class StateHeight extends State
         "dd": 12
 
     @background = new Map
-      "map": "assets/minimap.png"
+      "mapfile": "assets/minimap.png"
       "pattern": "simple"
       "sprite": simple
     

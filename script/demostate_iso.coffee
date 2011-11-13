@@ -27,7 +27,7 @@ stateclass["iso"] = class StateIso extends State
         "00dddd00": 15
         
     @background = new Map
-      "map": "assets/map.png"
+      "mapfile": "assets/map.png"
       "pattern": "square"
       "sprite": beach3d
       

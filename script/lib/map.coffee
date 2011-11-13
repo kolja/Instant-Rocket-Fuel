@@ -1,10 +1,11 @@
 
 class Map
   constructor: (hash) -> 
-    @map = hash["map"]
     @sprite = hash["sprite"]
     @tiles = []
-    @loadMapDataFromImage @map, hash["pattern"]
+    @width = 0 # width and height of the map in tiles - can only be determined after the mapfile loading has completed
+    @height = 0
+    @loadMapDataFromImage hash["mapfile"], hash["pattern"]
 
   render: (ctx) ->
     for tile in @tiles
@@ -18,7 +19,9 @@ class Map
     m = []
     $(map).load =>
       canvas = document.createElement("canvas")
-      canvas.width = map.width 
+      @width = map.width
+      @height = map.height
+      canvas.width = map.width
       canvas.height = map.height
       ctx = canvas.getContext("2d")
       ctx.drawImage( map, 0, 0)
@@ -52,9 +55,18 @@ class Map
                 green = parseInt( m[row][col][1], 16 )
                 z = parseInt( m[row][col][2], 16 )
                 @tiles.push( new Tile( @sprite, type, row/2, col/2, green, z ))
+  
+  tileAtVector: (vec) ->
+    x = Math.floor( vec.x / @sprite.innerWidth )
+    y = Math.floor( vec.y / @sprite.innerHeight )
+    index = y * @width + x
+    return @tiles[index]
 
 class Tile
   constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
+    
+  isWalkable: -> 
+    @green is 0
     
   render: (ctx) ->
     ctx.save()

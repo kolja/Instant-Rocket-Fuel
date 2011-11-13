@@ -27,7 +27,7 @@ stateclass["maze"] = class StateMaze extends State
         "dd000000": 17
 
     @background = new Map
-      "map": "assets/maze.png"
+      "mapfile": "assets/maze.png"
       "pattern": "cross"
       "sprite": maze
     
