@@ -426,8 +426,10 @@
     return Statemanager;
   })();
   Camera = (function() {
-    function Camera(projection) {
-      this.projection = projection;
+    function Camera(hash) {
+      this.projection = hash["projection"];
+      this.vpWidth = hash["vpWidth"];
+      this.vpHeight = hash["vpHeight"];
       this.coor = new Vector(100, 100);
     }
     Camera.prototype.update = function(delta) {};
@@ -435,7 +437,7 @@
       switch (this.projection) {
         case "normal":
           ctx.save();
-          ctx.translate(500 - this.coor.x, 300 - this.coor.y);
+          ctx.translate(this.vpWidth / 2 - this.coor.x, this.vpHeight / 2 - this.coor.y);
           callback();
           return ctx.restore();
         case "iso":
@@ -588,6 +590,11 @@
       var i, jumpnrunSprite;
       this.parent = parent;
       this.hero = new Hero;
+      this.camera = new Camera({
+        "projection": "normal",
+        "vpWidth": this.parent.width,
+        "vpHeight": this.parent.height
+      });
       jumpnrunSprite = new Sprite({
         "texture": "assets/images/jumpnrun.png",
         "width": 100,
@@ -622,6 +629,7 @@
     StateJumpNRun.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
       this.hero.update(delta, this.background);
+      this.camera.coor = this.hero.coor;
       _ref = this.spaceships;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -631,7 +639,7 @@
       return _results;
     };
     StateJumpNRun.prototype.render = function(ctx) {
-      return this.hero.camera.apply(ctx, __bind(function() {
+      return this.camera.apply(ctx, __bind(function() {
         var spaceship, _i, _len, _ref, _results;
         this.background.render(ctx);
         this.hero.render(ctx);
@@ -771,7 +779,6 @@
       this.speed = new Vector(0, 0);
       this.force = 0.01;
       this.gravity = 0.01;
-      this.camera = new Camera("normal");
       this.key = [];
       _ref = ['left', 'up', 'right', 'down', 'space'];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -802,7 +809,9 @@
       }, this));
     }
     Hero.prototype.update = function(delta, map) {
-      if (map.tileAtVector(this.coor).isWalkable()) {
+      var walkable, _base;
+      walkable = typeof (_base = map.tileAtVector(this.coor)).isWalkable === "function" ? _base.isWalkable() : void 0;
+      if (walkable) {
         this.speed.y += this.gravity;
       } else {
         this.speed.y = 0;
@@ -823,8 +832,7 @@
         this.state = "jumping";
         this.speed.y = -0.5;
       }
-      this.coor = this.coor.add(this.speed.mult(delta));
-      return this.camera.coor = this.coor;
+      return this.coor = this.coor.add(this.speed.mult(delta));
     };
     Hero.prototype.render = function(ctx) {
       ctx.save();

@@ -2,7 +2,10 @@
 
 class Camera
 
-  constructor: (@projection) ->
+  constructor: (hash) ->
+    @projection = hash["projection"]
+    @vpWidth = hash["vpWidth"]
+    @vpHeight = hash["vpHeight"]
     @coor = new Vector( 100, 100 )
         
   update: (delta) ->
@@ -12,7 +15,7 @@ class Camera
     switch @projection
       when "normal"
         ctx.save()
-        ctx.translate 500-@coor.x, 300-@coor.y
+        ctx.translate @vpWidth/2 - @coor.x, @vpHeight/2 - @coor.y
         callback()
         ctx.restore()
       when "iso"       

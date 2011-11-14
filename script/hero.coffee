@@ -17,7 +17,7 @@ class Hero
     @force = 0.01
     @gravity = 0.01
 
-    @camera = new Camera "normal"
+    
 
     # Eventhandling stuff:
 
@@ -36,7 +36,8 @@ class Hero
   update: (delta, map) ->
     
     # apply gravity
-    if map.tileAtVector(@coor).isWalkable()
+    walkable = map.tileAtVector(@coor).isWalkable?()
+    if walkable
       @speed.y += @gravity
     else
       @speed.y = 0
@@ -60,7 +61,6 @@ class Hero
       @speed.y = -0.5
        
     @coor = @coor.add( @speed.mult delta )
-    @camera.coor = @coor
 
   render: (ctx) ->
     ctx.save()

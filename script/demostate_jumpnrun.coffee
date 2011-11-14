@@ -4,6 +4,8 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
     
     @hero = new Hero
     
+    @camera = new Camera {"projection": "normal", "vpWidth": @parent.width, "vpHeight": @parent.height}
+    
     jumpnrunSprite = new Sprite
       "texture": "assets/images/jumpnrun.png"
       "width": 100
@@ -35,11 +37,12 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
     
   update: (delta) ->
     @hero.update(delta, @background)
+    @camera.coor = @hero.coor
     for spaceship in @spaceships
       spaceship.update delta
     
   render: (ctx) ->
-    @hero.camera.apply ctx, =>
+    @camera.apply ctx, =>
       @background.render(ctx)
       @hero.render(ctx)
       for spaceship in @spaceships
