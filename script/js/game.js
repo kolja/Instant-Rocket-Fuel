@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, Camera, Game, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
+  var Animation, Asteroids, Background, Camera, Game, Hero, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -169,6 +169,8 @@
     function Map(hash) {
       this.sprite = hash["sprite"];
       this.tiles = [];
+      this.width = 0;
+      this.height = 0;
       this.loadMapDataFromImage(hash["mapfile"], hash["pattern"]);
     }
     Map.prototype.render = function(ctx) {
@@ -189,6 +191,8 @@
       return $(map).load(__bind(function() {
         var canvas, col, ctx, data, green, i, p, row, type, z, _len, _ref, _ref2, _ref3, _ref4, _results, _results2, _results3, _step, _step2;
         canvas = document.createElement("canvas");
+        this.width = map.width;
+        this.height = map.height;
         canvas.width = map.width;
         canvas.height = map.height;
         ctx = canvas.getContext("2d");
@@ -256,8 +260,11 @@
       }, this));
     };
     Map.prototype.tileAtVector = function(vec) {
-      var xIndex;
-      return xIndex = map.width(vec.x);
+      var index, x, y;
+      x = Math.floor(vec.x / this.sprite.innerWidth);
+      y = Math.floor(vec.y / this.sprite.innerHeight);
+      index = y * this.width + x;
+      return this.tiles[index];
     };
     return Map;
   })();
@@ -416,46 +423,26 @@
     return Statemanager;
   })();
   Camera = (function() {
-    function Camera() {
-      var direction, _i, _len, _ref;
-      this.state = "normal";
-      this.sprite = new Sprite({
-        "texture": "assets/images/test.png",
-        "width": 50,
-        "height": 50
-      });
-      _ref = ['left', 'up', 'right', 'down', 'space'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        direction = _ref[_i];
-        this.key[direction] = false;
-      }
-      this.sprite.addImage("normal", 4);
+    function Camera(projection) {
+      this.projection = projection;
       this.coor = new Vector(100, 100);
-      this.speed = new Vector(0.1, 0.1);
-      $("html").bind("keydown", __bind(function(event) {
-        var directions;
-        directions = {
-          37: "left",
-          38: "up",
-          39: "right",
-          40: "down",
-          32: "space"
-        };
-        this.key[directions[event.which]] = true;
-        return console.log(event.which);
-      }, this));
     }
-    Camera.prototype.update = function(delta) {
-      return this.coor = this.coor.add(this.speed.mult(delta));
-    };
-    Camera.prototype.render = function(ctx) {
-      ctx.save();
-      ctx.translate(this.coor.x, this.coor.y);
-      this.sprite.render(this.state, ctx);
-      return ctx.restore();
-    };
-    Camera.prototype.hello = function() {
-      return console.log("hello!");
+    Camera.prototype.update = function(delta) {};
+    Camera.prototype.apply = function(ctx, callback) {
+      switch (this.projection) {
+        case "normal":
+          ctx.save();
+          ctx.translate(500 - this.coor.x, 300 - this.coor.y);
+          callback();
+          return ctx.restore();
+        case "iso":
+          ctx.save();
+          ctx.scale(1, 0.5);
+          ctx.rotate(Math.PI / 4);
+          ctx.translate(200, -400);
+          callback();
+          return ctx.restore();
+      }
     };
     return Camera;
   })();
@@ -597,6 +584,7 @@
     function StateJumpNRun(parent) {
       var i, jumpnrunSprite;
       this.parent = parent;
+      this.hero = new Hero;
       jumpnrunSprite = new Sprite({
         "texture": "assets/images/jumpnrun.png",
         "width": 100,
@@ -630,6 +618,7 @@
     }
     StateJumpNRun.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
+      this.hero.update(delta, this.background);
       _ref = this.spaceships;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -639,15 +628,18 @@
       return _results;
     };
     StateJumpNRun.prototype.render = function(ctx) {
-      var spaceship, _i, _len, _ref, _results;
-      this.background.render(ctx);
-      _ref = this.spaceships;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        spaceship = _ref[_i];
-        _results.push(spaceship.render(ctx));
-      }
-      return _results;
+      return this.hero.camera.apply(ctx, __bind(function() {
+        var spaceship, _i, _len, _ref, _results;
+        this.background.render(ctx);
+        this.hero.render(ctx);
+        _ref = this.spaceships;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          spaceship = _ref[_i];
+          _results.push(spaceship.render(ctx));
+        }
+        return _results;
+      }, this));
     };
     return StateJumpNRun;
   })();
@@ -722,12 +714,7 @@
         "width": 50,
         "height": 50
       });
-      this.sprite.addAnimation("normal", {
-        frames: [0, 1, 2, 3, 4].shuffle(),
-        fps: 3,
-        loop: true,
-        callback: this.hello
-      });
+      this.sprite.addImage("normal", Math.floor(Math.random() * 10));
       this.coor = new Vector(Math.random() * 1024, Math.random() * 768);
       this.speed = new Vector(0.1, 0.1);
       if (Math.random() > 0.5) {
@@ -763,5 +750,85 @@
       return console.log("hello!");
     };
     return Spaceship;
+  })();
+  Hero = (function() {
+    function Hero() {
+      var direction, _i, _len, _ref;
+      this.state = "normal";
+      this.sprite = new Sprite({
+        "texture": "assets/images/test.png",
+        "width": 50,
+        "height": 50,
+        "key": {
+          "normal": 3,
+          "jumping": 5
+        }
+      });
+      this.coor = new Vector(100, 100);
+      this.speed = new Vector(0, 0);
+      this.force = 0.01;
+      this.gravity = 0.01;
+      this.camera = new Camera("normal");
+      this.key = [];
+      _ref = ['left', 'up', 'right', 'down', 'space'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        direction = _ref[_i];
+        this.key[direction] = false;
+      }
+      $("html").bind("keydown", __bind(function(event) {
+        var directions;
+        directions = {
+          37: "left",
+          38: "up",
+          39: "right",
+          40: "down",
+          32: "space"
+        };
+        return this.key[directions[event.which]] = true;
+      }, this));
+      $("html").bind("keyup", __bind(function(event) {
+        var directions;
+        directions = {
+          37: "left",
+          38: "up",
+          39: "right",
+          40: "down",
+          32: "space"
+        };
+        return this.key[directions[event.which]] = false;
+      }, this));
+    }
+    Hero.prototype.update = function(delta, map) {
+      if (map.tileAtVector(this.coor).isWalkable()) {
+        this.speed.y += this.gravity;
+      } else {
+        this.speed.y = 0;
+        this.state = "normal";
+      }
+      if (this.key["right"]) {
+        this.speed.x += this.force;
+      } else if (this.key["left"]) {
+        this.speed.x -= this.force;
+      } else {
+        if (this.speed.x > 0) {
+          this.speed.x -= this.force;
+        } else {
+          this.speed.x += this.force;
+        }
+      }
+      if (this.key["space"] && this.state !== "jumping") {
+        this.state = "jumping";
+        this.speed.y = -0.5;
+      }
+      this.coor = this.coor.add(this.speed.mult(delta));
+      return this.camera.coor = this.coor;
+    };
+    Hero.prototype.render = function(ctx) {
+      ctx.save();
+      ctx.translate(this.coor.x, this.coor.y);
+      this.sprite.render(this.state, ctx);
+      return ctx.restore();
+    };
+    return Hero;
   })();
 }).call(this);

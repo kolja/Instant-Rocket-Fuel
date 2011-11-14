@@ -21,6 +21,7 @@ appFiles = [
   'demostate_jumpnrun'
   'demostate_maze'
   'spaceship'
+  'hero'
 ]
 
 task 'build:coffee', 'Build single application file from source files', ->

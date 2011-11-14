@@ -4,17 +4,14 @@
 # 
 # usage:
 #
-# sprite = new Sprite( {
-#   "texture": "img/texture.png, 
-#   "width":50, 
-#   "height":50, 
-#   "texWidth":250 
-#   "key": {
-#     "spaceship": 1,
-#     "rock": 2,
+# sprite = new Sprite
+#   "texture": "img/texture.png
+#   "width":50
+#   "height":50
+#   "key":
+#     "spaceship": 1
+#     "rock": 2
 #     "enemy": 3
-#   }
-# })
 # 
 # sprite.render("spaceship")
 #
@@ -26,7 +23,6 @@ class Sprite
     @height = hash["height"]
     @texture = new Image()
     @texture.src = hash["texture"]
-    #@texWidth = hash["texWidth"]
     @key = hash["key"] ? {}
       
     for key, i of @key
