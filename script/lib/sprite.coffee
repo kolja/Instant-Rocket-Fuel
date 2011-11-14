@@ -50,14 +50,17 @@ class Shape
     @sy = Math.floor(( index * @sprite.width ) / @sprite.texWidth) * @sprite.height
     
   render: (ctx) ->
+    ctx.save()
+    ctx.translate @sprite.width/2, @sprite.height/2
     ctx.drawImage( @sprite.texture, @sx, @sy, @sprite.width, @sprite.height, 0, 0, @sprite.width, @sprite.height )
+    ctx.restore()
 
 class Animation 
   constructor: (@sprite, params) ->
     @fps = params["fps"] ? 30
     @loop = params["loop"] ? true
     @callback = params["callback"] ? null
-    @frames = for index in params["frames"] 
+    @frames = for index in params["frames"]
       new Shape @sprite, index
     @lastFrame = @frames.length - 1
     @timer = new Timer

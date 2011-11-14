@@ -341,7 +341,10 @@
       this.sy = Math.floor((index * this.sprite.width) / this.sprite.texWidth) * this.sprite.height;
     }
     Shape.prototype.render = function(ctx) {
-      return ctx.drawImage(this.sprite.texture, this.sx, this.sy, this.sprite.width, this.sprite.height, 0, 0, this.sprite.width, this.sprite.height);
+      ctx.save();
+      ctx.translate(this.sprite.width / 2, this.sprite.height / 2);
+      ctx.drawImage(this.sprite.texture, this.sx, this.sy, this.sprite.width, this.sprite.height, 0, 0, this.sprite.width, this.sprite.height);
+      return ctx.restore();
     };
     return Shape;
   })();
