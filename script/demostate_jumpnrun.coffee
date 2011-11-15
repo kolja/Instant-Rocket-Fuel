@@ -2,7 +2,7 @@
 stateclass["jumpnrun"] = class StateJumpNRun extends State
   constructor: (@parent) ->
     
-    @hero = new Hero
+    @hero = new Hero @parent.eventmanager, @parent.keyboard
     
     @camera = new Camera {"projection": "normal", "vpWidth": @parent.width, "vpHeight": @parent.height}
     
@@ -33,7 +33,7 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
     
     @spaceships = []
     for i in [0..3]
-      @spaceships[i] = new Spaceship
+      @spaceships[i] = new Spaceship @parent.eventmanager, @parent.keyboard
     
   update: (delta) ->
     @hero.update(delta, @background)

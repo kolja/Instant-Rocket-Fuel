@@ -2,7 +2,7 @@
 
 class Spaceship
 
-  constructor: ->
+  constructor: (@eventmanager, @keyboard) ->
     @state = "normal"
     @sprite = new Sprite
       "texture": "assets/images/test.png"
@@ -22,6 +22,7 @@ class Spaceship
     if @coor.x > 1024
       @speed.x = @speed.x * -1
       @coor.x = 1024
+      @eventmanager.trigger "touchdown"
     if @coor.x < 0
       @speed.x = @speed.x * -1
       @coor.x = 0
@@ -31,6 +32,9 @@ class Spaceship
     if @coor.y < 0
       @speed.y = @speed.y * -1
       @coor.y = 0
+
+  touchdown: ->
+    console.log "Spaceship says: Touchdown"
 
   render: (ctx) ->
     ctx.save()

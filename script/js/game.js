@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, Camera, Game, Hero, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
+  var Animation, Asteroids, Background, Camera, Eventmanager, Game, Hero, Keyboard, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -130,6 +130,65 @@
       return "(" + this.x + ", " + this.y + ")";
     };
     return Vector;
+  })();
+  Eventmanager = (function() {
+    function Eventmanager() {
+      this.eventlist = {};
+    }
+    Eventmanager.prototype.register = function(event, callback) {
+      if (this.eventlist[event] == null) {
+        this.eventlist[event] = [];
+      }
+      return this.eventlist[event].push(callback);
+    };
+    Eventmanager.prototype.trigger = function(event, origin) {
+      var callback, _i, _len, _ref, _results;
+      _ref = this.eventlist[event];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        callback = _ref[_i];
+        _results.push(callback(origin));
+      }
+      return _results;
+    };
+    return Eventmanager;
+  })();
+  Keyboard = (function() {
+    function Keyboard() {
+      var direction, _i, _len, _ref;
+      this.keyarray = [];
+      _ref = ['left', 'up', 'right', 'down', 'space'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        direction = _ref[_i];
+        this.keyarray[direction] = false;
+      }
+      $("html").bind("keydown", __bind(function(event) {
+        var directions;
+        directions = {
+          37: "left",
+          38: "up",
+          39: "right",
+          40: "down",
+          32: "space"
+        };
+        return this.keyarray[directions[event.which]] = true;
+      }, this));
+      $("html").bind("keyup", __bind(function(event) {
+        var directions;
+        directions = {
+          37: "left",
+          38: "up",
+          39: "right",
+          40: "down",
+          32: "space"
+        };
+        return this.keyarray[directions[event.which]] = false;
+      }, this));
+    }
+    Keyboard.prototype.key = function(which) {
+      return this.keyarray[which];
+    };
+    return Keyboard;
   })();
   Game = (function() {
     function Game(width, height) {
@@ -455,6 +514,8 @@
     __extends(Asteroids, Game);
     function Asteroids(width, height) {
       Asteroids.__super__.constructor.call(this, width, height);
+      this.eventmanager = new Eventmanager;
+      this.keyboard = new Keyboard;
       this.stateManager = new Statemanager(this, ["bigbg", "jumpnrun", "iso", "maze", "height"]);
       this.stateManager.setState("jumpnrun");
     }
@@ -589,7 +650,7 @@
     function StateJumpNRun(parent) {
       var i, jumpnrunSprite;
       this.parent = parent;
-      this.hero = new Hero;
+      this.hero = new Hero(this.parent.eventmanager, this.parent.keyboard);
       this.camera = new Camera({
         "projection": "normal",
         "vpWidth": this.parent.width,
@@ -623,7 +684,7 @@
       });
       this.spaceships = [];
       for (i = 0; i <= 3; i++) {
-        this.spaceships[i] = new Spaceship;
+        this.spaceships[i] = new Spaceship(this.parent.eventmanager, this.parent.keyboard);
       }
     }
     StateJumpNRun.prototype.update = function(delta) {
@@ -718,7 +779,9 @@
     return StateMaze;
   })();
   Spaceship = (function() {
-    function Spaceship() {
+    function Spaceship(eventmanager, keyboard) {
+      this.eventmanager = eventmanager;
+      this.keyboard = keyboard;
       this.state = "normal";
       this.sprite = new Sprite({
         "texture": "assets/images/test.png",
@@ -737,6 +800,7 @@
       if (this.coor.x > 1024) {
         this.speed.x = this.speed.x * -1;
         this.coor.x = 1024;
+        this.eventmanager.trigger("touchdown");
       }
       if (this.coor.x < 0) {
         this.speed.x = this.speed.x * -1;
@@ -751,6 +815,9 @@
         return this.coor.y = 0;
       }
     };
+    Spaceship.prototype.touchdown = function() {
+      return console.log("Spaceship says: Touchdown");
+    };
     Spaceship.prototype.render = function(ctx) {
       ctx.save();
       ctx.translate(this.coor.x, this.coor.y);
@@ -763,8 +830,9 @@
     return Spaceship;
   })();
   Hero = (function() {
-    function Hero() {
-      var direction, _i, _len, _ref;
+    function Hero(eventmanager, keyboard) {
+      this.eventmanager = eventmanager;
+      this.keyboard = keyboard;
       this.state = "normal";
       this.sprite = new Sprite({
         "texture": "assets/images/test.png",
@@ -779,35 +847,11 @@
       this.speed = new Vector(0, 0);
       this.force = 0.01;
       this.gravity = 0.01;
-      this.key = [];
-      _ref = ['left', 'up', 'right', 'down', 'space'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        direction = _ref[_i];
-        this.key[direction] = false;
-      }
-      $("html").bind("keydown", __bind(function(event) {
-        var directions;
-        directions = {
-          37: "left",
-          38: "up",
-          39: "right",
-          40: "down",
-          32: "space"
-        };
-        return this.key[directions[event.which]] = true;
-      }, this));
-      $("html").bind("keyup", __bind(function(event) {
-        var directions;
-        directions = {
-          37: "left",
-          38: "up",
-          39: "right",
-          40: "down",
-          32: "space"
-        };
-        return this.key[directions[event.which]] = false;
-      }, this));
+      this.eventmanager.register("touchdown", this.touchdown);
     }
+    Hero.prototype.touchdown = function() {
+      return console.log("Hero says: Touchdown occurred");
+    };
     Hero.prototype.update = function(delta, map) {
       var walkable, _base;
       walkable = typeof (_base = map.tileAtVector(this.coor)).isWalkable === "function" ? _base.isWalkable() : void 0;
@@ -817,9 +861,9 @@
         this.speed.y = 0;
         this.state = "normal";
       }
-      if (this.key["right"]) {
+      if (this.keyboard.key("right")) {
         this.speed.x += this.force;
-      } else if (this.key["left"]) {
+      } else if (this.keyboard.key("left")) {
         this.speed.x -= this.force;
       } else {
         if (this.speed.x > 0) {
@@ -828,7 +872,7 @@
           this.speed.x += this.force;
         }
       }
-      if (this.key["space"] && this.state !== "jumping") {
+      if (this.keyboard.key("space") && this.state !== "jumping") {
         this.state = "jumping";
         this.speed.y = -0.5;
       }

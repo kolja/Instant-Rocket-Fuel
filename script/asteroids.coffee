@@ -6,9 +6,14 @@
 class Asteroids extends Game
   
   constructor: (width, height) ->
-    super width, height 
+    super width, height
+    
+    @eventmanager = new Eventmanager
+    @keyboard = new Keyboard
+    
     @stateManager = new Statemanager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Gamestates or Levels
     @stateManager.setState "jumpnrun"
+    
     
   update: ->
     super()

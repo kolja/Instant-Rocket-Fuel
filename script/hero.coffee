@@ -1,8 +1,8 @@
 
 
 class Hero
-
-  constructor: ->
+  constructor: (@eventmanager, @keyboard) ->
+    
     @state = "normal"
     @sprite = new Sprite
       "texture": "assets/images/test.png"
@@ -17,21 +17,11 @@ class Hero
     @force = 0.01
     @gravity = 0.01
 
-    
-
-    # Eventhandling stuff:
-
-    @key = []
-    for direction in ['left', 'up', 'right', 'down', 'space']
-      @key[direction] = false
-
-    $("html").bind "keydown", (event) =>
-      directions = {37:"left",38:"up",39:"right",40:"down",32:"space"}
-      @key[directions[event.which]] = true
-      
-    $("html").bind "keyup", (event) =>
-      directions = {37:"left",38:"up",39:"right",40:"down",32:"space"}
-      @key[directions[event.which]] = false
+    # event Manager
+    @eventmanager.register "touchdown", @touchdown
+  
+  touchdown: ->
+    console.log "Hero says: Touchdown occurred"
   
   update: (delta, map) ->
     
@@ -44,9 +34,9 @@ class Hero
       @state = "normal"
     
     # left/right movement
-    if @key["right"] 
+    if @keyboard.key("right")
       @speed.x += @force 
-    else if @key["left"]
+    else if @keyboard.key("left")
       @speed.x -= @force 
     else
       if @speed.x > 0
@@ -54,12 +44,11 @@ class Hero
       else
         @speed.x += @force
       
-    
     # jump
-    if @key["space"] and @state isnt "jumping"
+    if @keyboard.key("space") and @state isnt "jumping"
       @state = "jumping"
       @speed.y = -0.5
-       
+      
     @coor = @coor.add( @speed.mult delta )
 
   render: (ctx) ->

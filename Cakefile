@@ -5,6 +5,8 @@ libFiles  = [
   'lib/helpers'
   'lib/timer'
   'lib/vector'
+  'lib/eventmanager'
+  'lib/keyboard'
   'lib/game'
   'lib/map'
   'lib/background'
