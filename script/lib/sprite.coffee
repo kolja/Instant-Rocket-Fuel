@@ -71,7 +71,7 @@ class Animation
     if @playing
       @currentFrame = Math.floor( @timer.timeSinceLastPunch() / (1000 / @fps) )
       if @currentFrame > @lastFrame
-        @callback()
+        @callback?()
         if @loop
           @rewind()
         else
