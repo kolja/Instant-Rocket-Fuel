@@ -43,7 +43,7 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
     
   render: (ctx) ->
     @camera.apply ctx, =>
-      @background.render(ctx)
+      @background.render(ctx, @camera)
       @hero.render(ctx)
       for spaceship in @spaceships
         spaceship.render ctx

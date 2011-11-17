@@ -7,9 +7,10 @@ class Map
     @height = 0
     @loadMapDataFromImage hash["mapfile"], hash["pattern"]
 
-  render: (ctx) ->
+  render: (ctx, camera) ->
     for tile in @tiles
-      tile.render(ctx)
+      if tile.squaredDistanceTo(camera.coor) < 300000
+        tile.render(ctx)
 
   # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
   # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
@@ -67,7 +68,12 @@ class Tile
     
   isWalkable: -> 
     @green is 0
-    
+
+  squaredDistanceTo: (vec) ->
+    x = @col * @sprite.width + @sprite.width/2
+    y = @row * @sprite.height + @sprite.height/2
+    vec.subtract( new Vector(x,y) ).lengthSquared() # maybe add a distance method to vector?
+
   render: (ctx) ->
     ctx.save()
     ctx.translate @col*@sprite.innerWidth - @z, @row*@sprite.innerHeight - @z

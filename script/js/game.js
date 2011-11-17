@@ -268,13 +268,17 @@
       this.loadMapDataFromImage(hash["mapfile"], hash["pattern"]);
     }
 
-    Map.prototype.render = function(ctx) {
+    Map.prototype.render = function(ctx, camera) {
       var tile, _i, _len, _ref, _results;
       _ref = this.tiles;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tile = _ref[_i];
-        _results.push(tile.render(ctx));
+        if (tile.squaredDistanceTo(camera.coor) < 300000) {
+          _results.push(tile.render(ctx));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
@@ -385,6 +389,13 @@
 
     Tile.prototype.isWalkable = function() {
       return this.green === 0;
+    };
+
+    Tile.prototype.squaredDistanceTo = function(vec) {
+      var x, y;
+      x = this.col * this.sprite.width + this.sprite.width / 2;
+      y = this.row * this.sprite.height + this.sprite.height / 2;
+      return vec.subtract(new Vector(x, y)).lengthSquared();
     };
 
     Tile.prototype.render = function(ctx) {
@@ -828,7 +839,7 @@
       var _this = this;
       return this.camera.apply(ctx, function() {
         var spaceship, _i, _len, _ref, _results;
-        _this.background.render(ctx);
+        _this.background.render(ctx, _this.camera);
         _this.hero.render(ctx);
         _ref = _this.spaceships;
         _results = [];
