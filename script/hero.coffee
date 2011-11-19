@@ -14,8 +14,8 @@ class Hero
 
     @coor = new Vector( 100, 100 )
     @speed = new Vector( 0, 0 )
-    @force = 0.01
-    @gravity = 0.01
+    @force = new Vector( 0.01, 0 )
+    @gravity = new Vector( 0, 0.01 )
 
     # event Manager
     @eventmanager.register "touchdown", @touchdown
@@ -26,23 +26,23 @@ class Hero
   update: (delta, map) ->
     
     # apply gravity
-    walkable = map.tileAtVector(@coor).isWalkable?()
+    walkable = map.tileAtVector(@coor).isWalkable?() 
     if walkable
-      @speed.y += @gravity
+      @speed.add_ @gravity
     else
       @speed.y = 0
       @state = "normal"
     
     # left/right movement
     if @keyboard.key("right")
-      @speed.x += @force 
+      @speed.add_ @force 
     else if @keyboard.key("left")
-      @speed.x -= @force 
+      @speed.subtract_ @force 
     else
       if @speed.x > 0
-        @speed.x -= @force
+        @speed.subtract_ @force
       else
-        @speed.x += @force
+        @speed.add_ @force
       
     # jump
     if @keyboard.key("space") and @state isnt "jumping"

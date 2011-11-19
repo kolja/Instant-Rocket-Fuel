@@ -4,7 +4,8 @@
 #  Created by Kolja Wilcke in October 2011
 #  Copyright 2011. All rights reserved.
 #
-
+#  The underscore at the end of a method signifies that it operates on itself
+#
 
 class Vector
   constructor: (x = 0, y = 0) ->
@@ -17,14 +18,26 @@ class Vector
   # Add another Vector
   add: (vec) ->
     new Vector @x + vec.x, @y + vec.y
-
-  # Just for convenience
+    
+  add_: (vec) ->
+    @x += vec.x
+    @y += vec.y
+    
+  # Subtract another Vector
   subtract: (vec) ->
     new Vector @x - vec.x, @y - vec.y
+    
+  subtract_: (vec) ->
+    @x -= vec.x
+    @y -= vec.y
 
   # multiply the vector with a Number
   mult: (num) ->
     new Vector @x * num, @y * num
+
+  mult_: (num) ->
+    @x *= num
+    @y *= num
 
   # returns the length of the vector (Betrag)
   length: ->
@@ -36,9 +49,14 @@ class Vector
 
   # returns the normalized vector (Length = 1)
   norm: (factor=1) ->
-    l = @length()
-    if ( l > 0 ) 
+    if ( @length() > 0 ) 
       return @mult factor/l
+    else
+      return null
+      
+  norm_: (factor=1) ->
+    if ( @length() > 0 ) 
+      return @mult_ factor/l
     else
       return null
 
@@ -64,6 +82,10 @@ class Vector
   projectTo: (vec) ->
     vec.mult( @scalarProduct(vec) / vec.lengthSquared() )
 
+  projectTo_: (vec) ->
+    m = @scalarProduct(vec) / vec.lengthSquared()
+    @x *= m
+    @y *= m
 
 
   # Class method: checks if two vectors are intersecting - returns intersection point

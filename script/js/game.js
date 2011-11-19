@@ -65,11 +65,23 @@
     Vector.prototype.add = function(vec) {
       return new Vector(this.x + vec.x, this.y + vec.y);
     };
+    Vector.prototype.add_ = function(vec) {
+      this.x += vec.x;
+      return this.y += vec.y;
+    };
     Vector.prototype.subtract = function(vec) {
       return new Vector(this.x - vec.x, this.y - vec.y);
     };
+    Vector.prototype.subtract_ = function(vec) {
+      this.x -= vec.x;
+      return this.y -= vec.y;
+    };
     Vector.prototype.mult = function(num) {
       return new Vector(this.x * num, this.y * num);
+    };
+    Vector.prototype.mult_ = function(num) {
+      this.x *= num;
+      return this.y *= num;
     };
     Vector.prototype.length = function() {
       return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -78,13 +90,21 @@
       return this.x * this.x + this.y * this.y;
     };
     Vector.prototype.norm = function(factor) {
-      var l;
       if (factor == null) {
         factor = 1;
       }
-      l = this.length();
-      if (l > 0) {
+      if (this.length() > 0) {
         return this.mult(factor / l);
+      } else {
+        return null;
+      }
+    };
+    Vector.prototype.norm_ = function(factor) {
+      if (factor == null) {
+        factor = 1;
+      }
+      if (this.length() > 0) {
+        return this.mult_(factor / l);
       } else {
         return null;
       }
@@ -107,6 +127,12 @@
     };
     Vector.prototype.projectTo = function(vec) {
       return vec.mult(this.scalarProduct(vec) / vec.lengthSquared());
+    };
+    Vector.prototype.projectTo_ = function(vec) {
+      var m;
+      m = this.scalarProduct(vec) / vec.lengthSquared();
+      this.x *= m;
+      return this.y *= m;
     };
     Vector.intersecting = function(oa, a, ob, b) {
       var c, col, l, m, mu, mult, n;
@@ -533,9 +559,11 @@
   })();
   Camera = (function() {
     function Camera(hash) {
+      var _ref;
       this.projection = hash["projection"];
       this.vpWidth = hash["vpWidth"];
       this.vpHeight = hash["vpHeight"];
+      this.zoomFactor = (_ref = hash["zoomFactor"]) != null ? _ref : 1;
       this.coor = new Vector(100, 100);
     }
     Camera.prototype.update = function(delta) {};
@@ -892,8 +920,8 @@
       });
       this.coor = new Vector(100, 100);
       this.speed = new Vector(0, 0);
-      this.force = 0.01;
-      this.gravity = 0.01;
+      this.force = new Vector(0.01, 0);
+      this.gravity = new Vector(0, 0.01);
       this.eventmanager.register("touchdown", this.touchdown);
     }
     Hero.prototype.touchdown = function() {
@@ -903,20 +931,20 @@
       var walkable, _base;
       walkable = typeof (_base = map.tileAtVector(this.coor)).isWalkable === "function" ? _base.isWalkable() : void 0;
       if (walkable) {
-        this.speed.y += this.gravity;
+        this.speed.add_(this.gravity);
       } else {
         this.speed.y = 0;
         this.state = "normal";
       }
       if (this.keyboard.key("right")) {
-        this.speed.x += this.force;
+        this.speed.add_(this.force);
       } else if (this.keyboard.key("left")) {
-        this.speed.x -= this.force;
+        this.speed.subtract_(this.force);
       } else {
         if (this.speed.x > 0) {
-          this.speed.x -= this.force;
+          this.speed.subtract_(this.force);
         } else {
-          this.speed.x += this.force;
+          this.speed.add_(this.force);
         }
       }
       if (this.keyboard.key("space") && this.state !== "jumping") {
