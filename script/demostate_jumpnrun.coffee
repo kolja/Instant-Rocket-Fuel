@@ -24,7 +24,7 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
         '88': 8
         "99": 9
         "aa": 10
-        'bb': 11
+        "bb": 11
 
     @background = new Map
       "mapfile": "assets/jumpnrun_map.png"
