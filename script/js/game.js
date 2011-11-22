@@ -303,7 +303,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tile = _ref[_i];
-        _results.push(tile.squaredDistanceTo(camera.coor) < 300000 ? tile.render(ctx) : void 0);
+        _results.push(tile.squaredDistanceTo(camera.coor) < 100000 ? tile.render(ctx) : void 0);
       }
       return _results;
     };
@@ -313,7 +313,7 @@
       map.src = file;
       m = [];
       return $(map).load(__bind(function() {
-        var canvas, col, ctx, data, green, i, p, row, type, z, _len, _ref, _ref2, _ref3, _ref4, _results, _results2, _results3, _step, _step2;
+        var canvas, col, ctx, data, green, i, index, p, row, tile, type, z, _len, _len2, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _results, _step, _step2, _step3;
         canvas = document.createElement("canvas");
         this.width = map.width;
         this.height = map.height;
@@ -334,53 +334,47 @@
         }
         switch (pattern) {
           case "simple":
-            _results = [];
             for (row = 0, _ref2 = map.height - 1; 0 <= _ref2 ? row <= _ref2 : row >= _ref2; 0 <= _ref2 ? row++ : row--) {
-              _results.push((function() {
-                var _ref3, _results2;
-                _results2 = [];
-                for (col = 0, _ref3 = map.width - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
-                  type = "" + m[row][col][0];
-                  green = parseInt(m[row][col][1], 16);
-                  z = parseInt(m[row][col][2], 16);
-                  _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
-                }
-                return _results2;
-              }).call(this));
+              for (col = 0, _ref3 = map.width - 1; 0 <= _ref3 ? col <= _ref3 : col >= _ref3; 0 <= _ref3 ? col++ : col--) {
+                type = "" + m[row][col][0];
+                green = parseInt(m[row][col][1], 16);
+                z = 0;
+                this.tiles.push(new Tile(this.sprite, type, row, col, green, z));
+              }
             }
-            return _results;
             break;
           case "square":
-            _results2 = [];
-            for (row = 0, _ref3 = map.height - 2; 0 <= _ref3 ? row <= _ref3 : row >= _ref3; 0 <= _ref3 ? row++ : row--) {
-              _results2.push((function() {
-                var _ref4, _results3;
-                _results3 = [];
-                for (col = 0, _ref4 = map.width - 2; 0 <= _ref4 ? col <= _ref4 : col >= _ref4; 0 <= _ref4 ? col++ : col--) {
-                  type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
-                  green = parseInt(m[row][col][1], 16);
-                  z = parseInt(m[row][col][2], 16);
-                  _results3.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
-                }
-                return _results3;
-              }).call(this));
+            for (row = 0, _ref4 = map.height - 2; 0 <= _ref4 ? row <= _ref4 : row >= _ref4; 0 <= _ref4 ? row++ : row--) {
+              for (col = 0, _ref5 = map.width - 2; 0 <= _ref5 ? col <= _ref5 : col >= _ref5; 0 <= _ref5 ? col++ : col--) {
+                type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
+                green = parseInt(m[row][col][1], 16);
+                z = parseInt(m[row][col][2], 16);
+                this.tiles.push(new Tile(this.sprite, type, row, col, green, z));
+              }
             }
-            return _results2;
             break;
           case "cross":
-            _results3 = [];
-            for (row = 1, _ref4 = map.height - 2, _step2 = 2; 1 <= _ref4 ? row <= _ref4 : row >= _ref4; row += _step2) {
-              _results3.push((function() {
-                var _ref5, _results4, _step3;
-                _results4 = [];
-                for (col = 1, _ref5 = map.width - 2, _step3 = 2; 1 <= _ref5 ? col <= _ref5 : col >= _ref5; col += _step3) {
-                  _results4.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], green = parseInt(m[row][col][1], 16), z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z))) : void 0);
+            for (row = 1, _ref6 = map.height - 2, _step2 = 2; 1 <= _ref6 ? row <= _ref6 : row >= _ref6; row += _step2) {
+              for (col = 1, _ref7 = map.width - 2, _step3 = 2; 1 <= _ref7 ? col <= _ref7 : col >= _ref7; col += _step3) {
+                if (m[row][col][0] !== "00") {
+                  type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0];
+                  green = parseInt(m[row][col][1], 16);
+                  z = parseInt(m[row][col][2], 16);
+                  this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z));
                 }
-                return _results4;
-              }).call(this));
+              }
             }
-            return _results3;
         }
+        _ref8 = this.tiles;
+        _results = [];
+        for (index = 0, _len2 = _ref8.length; index < _len2; index++) {
+          tile = _ref8[index];
+          tile.neighbor["w"] = this.tiles[index - 1];
+          tile.neighbor["e"] = this.tiles[index + 1];
+          tile.neighbor["n"] = this.tiles[index - this.width];
+          _results.push(tile.neighbor["s"] = this.tiles[index + this.width]);
+        }
+        return _results;
       }, this));
     };
     Map.prototype.tileAtVector = function(vec) {
@@ -400,14 +394,15 @@
       this.col = col;
       this.green = green != null ? green : 0;
       this.z = z != null ? z : 0;
+      this.neighbor = [];
     }
     Tile.prototype.isWalkable = function() {
       return this.green === 0;
     };
     Tile.prototype.squaredDistanceTo = function(vec) {
       var x, y;
-      x = this.col * this.sprite.width + this.sprite.width / 2;
-      y = this.row * this.sprite.height + this.sprite.height / 2;
+      x = this.col * this.sprite.innerWidth + this.sprite.innerWidth / 2;
+      y = this.row * this.sprite.innerHeight + this.sprite.innerHeight / 2;
       return vec.subtract(new Vector(x, y)).lengthSquared();
     };
     Tile.prototype.render = function(ctx) {
@@ -929,7 +924,7 @@
     };
     Hero.prototype.update = function(delta, map) {
       var walkable, _base;
-      walkable = typeof (_base = map.tileAtVector(this.coor)).isWalkable === "function" ? _base.isWalkable() : void 0;
+      walkable = typeof (_base = map.tileAtVector(this.coor).neighbor["s"]).isWalkable === "function" ? _base.isWalkable() : void 0;
       if (walkable) {
         this.speed.add_(this.gravity);
       } else {

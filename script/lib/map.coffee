@@ -9,7 +9,7 @@ class Map
 
   render: (ctx, camera) ->
     for tile in @tiles
-      if tile.squaredDistanceTo(camera.coor) < 300000
+      if tile.squaredDistanceTo(camera.coor) < 100000
         tile.render(ctx)
 
   # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
@@ -39,7 +39,8 @@ class Map
             for col in [0..map.width-1]
               type = "#{m[row][col][0]}"
               green = parseInt( m[row][col][1], 16 )
-              z = parseInt( m[row][col][2], 16 )          
+              # z = parseInt( m[row][col][2], 16 )
+              z = 0   
               @tiles.push( new Tile( @sprite, type, row, col, green, z ))
         when "square"
           for row in [0..map.height-2] 
@@ -56,6 +57,13 @@ class Map
                 green = parseInt( m[row][col][1], 16 )
                 z = parseInt( m[row][col][2], 16 )
                 @tiles.push( new Tile( @sprite, type, row/2, col/2, green, z ))
+                
+      for tile, index in @tiles
+        tile.neighbor["w"] = @tiles[index-1]
+        tile.neighbor["e"] = @tiles[index+1]
+        tile.neighbor["n"] = @tiles[index-@width]
+        tile.neighbor["s"] = @tiles[index+@width]
+        
   
   tileAtVector: (vec) ->
     x = Math.floor( vec.x / @sprite.innerWidth )
@@ -65,14 +73,15 @@ class Map
 
 class Tile
   constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
+    @neighbor = []
     
   isWalkable: -> 
     @green is 0
 
   squaredDistanceTo: (vec) ->
-    x = @col * @sprite.width + @sprite.width/2
-    y = @row * @sprite.height + @sprite.height/2
-    vec.subtract( new Vector(x,y) ).lengthSquared() # maybe add a distance method to vector?
+    x = @col * @sprite.innerWidth + @sprite.innerWidth/2
+    y = @row * @sprite.innerHeight + @sprite.innerHeight/2
+    vec.subtract( new Vector(x,y) ).lengthSquared() # maybe add a distance (class-)method to vector?
 
   render: (ctx) ->
     ctx.save()

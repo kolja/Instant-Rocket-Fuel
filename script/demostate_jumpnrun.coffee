@@ -5,6 +5,7 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
     @hero = new Hero @parent.eventmanager, @parent.keyboard
     
     @camera = new Camera {"projection": "normal", "vpWidth": @parent.width, "vpHeight": @parent.height}
+    # @camera.coor = new Vector(2500,1050)
     
     jumpnrunSprite = new Sprite
       "texture": "assets/images/jumpnrun.png"

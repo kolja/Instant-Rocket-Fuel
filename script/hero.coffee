@@ -21,12 +21,12 @@ class Hero
     @eventmanager.register "touchdown", @touchdown
   
   touchdown: ->
-    console.log "Hero says: Touchdown occurred"
+    console.log "Hero says: Touchdown occurred" 
   
   update: (delta, map) ->
     
     # apply gravity
-    walkable = map.tileAtVector(@coor).isWalkable?() 
+    walkable = map.tileAtVector(@coor).neighbor["s"].isWalkable?() 
     if walkable
       @speed.add_ @gravity
     else
