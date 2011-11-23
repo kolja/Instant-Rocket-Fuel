@@ -5,7 +5,16 @@ class Map
     @tiles = []
     @width = 0 # width and height of the map in tiles - can only be determined after the mapfile loading has completed
     @height = 0
-    @loadMapDataFromImage hash["mapfile"], hash["pattern"]
+    
+    switch hash["pattern"]
+      when "simple"
+        @read = @readSimple
+      when "square"
+        @read = @readSquare
+      when "cross"
+        @read = @readCross
+    
+    @loadMapDataFromImage hash["mapfile"] 
 
   render: (ctx, camera) ->
     for tile in @tiles
@@ -14,7 +23,7 @@ class Map
 
   # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
   # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
-  loadMapDataFromImage: (file, pattern) ->
+  loadMapDataFromImage: (file) ->
     map = new Image()
     map.src = file
     m = []
@@ -33,30 +42,7 @@ class Map
         m[row] ?= []
         m[row].push [Number(data[i]).toHex(),Number(data[i+1]).toHex(),Number(data[i+2]).toHex(),Number(data[i+3]).toHex()]
 
-      switch pattern
-        when "simple"
-          for row in [0..map.height-1] 
-            for col in [0..map.width-1]
-              type = "#{m[row][col][0]}"
-              green = parseInt( m[row][col][1], 16 )
-              # z = parseInt( m[row][col][2], 16 )
-              z = 0   
-              @tiles.push( new Tile( @sprite, type, row, col, green, z ))
-        when "square"
-          for row in [0..map.height-2] 
-            for col in [0..map.width-2]
-              type = "#{m[row][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row+1][col+1][0]}"
-              green = parseInt( m[row][col][1], 16 )
-              z = parseInt( m[row][col][2], 16 )
-              @tiles.push( new Tile( @sprite, type, row, col, green, z ))
-        when "cross"
-          for row in [1..map.height-2] by 2
-            for col in [1..map.width-2] by 2
-              unless m[row][col][0] is "00"
-                type = "#{m[row-1][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row][col-1][0]}"
-                green = parseInt( m[row][col][1], 16 )
-                z = parseInt( m[row][col][2], 16 )
-                @tiles.push( new Tile( @sprite, type, row/2, col/2, green, z ))
+      @read(map, m)
                 
       for tile, index in @tiles
         tile.neighbor["w"] = @tiles[index-1]
@@ -64,7 +50,32 @@ class Map
         tile.neighbor["n"] = @tiles[index-@width]
         tile.neighbor["s"] = @tiles[index+@width]
         
-  
+
+  readSimple: (map, m) ->
+    for row in [0..map.height-1] 
+      for col in [0..map.width-1]
+        type = "#{m[row][col][0]}"
+        green = parseInt( m[row][col][1], 16 )
+        z = parseInt( m[row][col][2], 16 )
+        @tiles.push( new Tile( @sprite, type, row, col, green, z ))
+        
+  readSqurar: (map, m) ->
+    for row in [0..map.height-2] 
+      for col in [0..map.width-2]
+        type = "#{m[row][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row+1][col+1][0]}"
+        green = parseInt( m[row][col][1], 16 )
+        z = parseInt( m[row][col][2], 16 )
+        @tiles.push( new Tile( @sprite, type, row, col, green, z ))
+        
+  readCross: (map, m) ->
+    for row in [1..map.height-2] by 2
+      for col in [1..map.width-2] by 2
+        unless m[row][col][0] is "00"
+          type = "#{m[row-1][col][0]}#{m[row][col+1][0]}#{m[row+1][col][0]}#{m[row][col-1][0]}"
+          green = parseInt( m[row][col][1], 16 )
+          z = parseInt( m[row][col][2], 16 )
+          @tiles.push( new Tile( @sprite, type, row/2, col/2, green, z ))
+
   tileAtVector: (vec) ->
     x = Math.floor( vec.x / @sprite.innerWidth )
     y = Math.floor( vec.y / @sprite.innerHeight )
