@@ -295,17 +295,24 @@
       this.tiles = [];
       this.width = 0;
       this.height = 0;
-      switch (hash["pattern"]) {
-        case "simple":
-          this.read = this.readSimple;
-          break;
-        case "square":
-          this.read = this.readSquare;
-          break;
-        case "cross":
-          this.read = this.readCross;
+      if (typeof hash["pattern"] === "function") {
+        this.read = hash["pattern"];
+      } else {
+        switch (hash["pattern"]) {
+          case "simple":
+            this.read = this.readSimple;
+            break;
+          case "square":
+            this.read = this.readSquare;
+            break;
+          case "cross":
+            this.read = this.readCross;
+        }
       }
-      this.loadMapDataFromImage(hash["mapfile"]);
+      this.map = new Image();
+      this.map.src = hash["mapfile"];
+      this.mapData = [];
+      this.loadMapDataFromImage();
     }
     Map.prototype.render = function(ctx, camera) {
       var tile, _i, _len, _ref, _results;
@@ -317,32 +324,28 @@
       }
       return _results;
     };
-    Map.prototype.loadMapDataFromImage = function(file) {
-      var m, map;
-      map = new Image();
-      map.src = file;
-      m = [];
-      return $(map).load(__bind(function() {
-        var canvas, ctx, data, i, index, p, row, tile, _len, _len2, _ref, _ref2, _results, _step;
+    Map.prototype.loadMapDataFromImage = function() {
+      return $(this.map).load(__bind(function() {
+        var canvas, ctx, data, i, index, p, row, tile, _base, _len, _len2, _ref, _ref2, _results, _step;
         canvas = document.createElement("canvas");
-        this.width = map.width;
-        this.height = map.height;
-        canvas.width = map.width;
-        canvas.height = map.height;
+        this.width = this.map.width;
+        this.height = this.map.height;
+        canvas.width = this.map.width;
+        canvas.height = this.map.height;
         ctx = canvas.getContext("2d");
-        ctx.drawImage(map, 0, 0);
-        data = ctx.getImageData(0, 0, map.width, map.height).data;
+        ctx.drawImage(this.map, 0, 0);
+        data = ctx.getImageData(0, 0, this.map.width, this.map.height).data;
         for (i = 0, _len = data.length, _step = 4; i < _len; i += _step) {
           p = data[i];
-          row = Math.floor((i / 4) / map.width);
-                    if ((_ref = m[row]) != null) {
+          row = Math.floor((i / 4) / this.map.width);
+                    if ((_ref = (_base = this.mapData)[row]) != null) {
             _ref;
           } else {
-            m[row] = [];
+            _base[row] = [];
           };
-          m[row].push([Number(data[i]).toHex(), Number(data[i + 1]).toHex(), Number(data[i + 2]).toHex(), Number(data[i + 3]).toHex()]);
+          this.mapData[row].push([Number(data[i]).toHex(), Number(data[i + 1]).toHex(), Number(data[i + 2]).toHex(), Number(data[i + 3]).toHex()]);
         }
-        this.read(map, m);
+        this.read();
         _ref2 = this.tiles;
         _results = [];
         for (index = 0, _len2 = _ref2.length; index < _len2; index++) {
@@ -355,17 +358,17 @@
         return _results;
       }, this));
     };
-    Map.prototype.readSimple = function(map, m) {
+    Map.prototype.readSimple = function() {
       var col, green, row, type, z, _ref, _results;
       _results = [];
-      for (row = 0, _ref = map.height - 1; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
+      for (row = 0, _ref = this.map.height - 1; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
         _results.push((function() {
           var _ref2, _results2;
           _results2 = [];
-          for (col = 0, _ref2 = map.width - 1; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
-            type = "" + m[row][col][0];
-            green = parseInt(m[row][col][1], 16);
-            z = parseInt(m[row][col][2], 16);
+          for (col = 0, _ref2 = this.map.width - 1; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
+            type = "" + this.mapData[row][col][0];
+            green = parseInt(this.mapData[row][col][1], 16);
+            z = parseInt(this.mapData[row][col][2], 16);
             _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
           }
           return _results2;
@@ -373,17 +376,17 @@
       }
       return _results;
     };
-    Map.prototype.readSqurar = function(map, m) {
+    Map.prototype.readSquare = function() {
       var col, green, row, type, z, _ref, _results;
       _results = [];
-      for (row = 0, _ref = map.height - 2; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
+      for (row = 0, _ref = this.map.height - 2; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
         _results.push((function() {
           var _ref2, _results2;
           _results2 = [];
-          for (col = 0, _ref2 = map.width - 2; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
-            type = "" + m[row][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row + 1][col + 1][0];
-            green = parseInt(m[row][col][1], 16);
-            z = parseInt(m[row][col][2], 16);
+          for (col = 0, _ref2 = this.map.width - 2; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
+            type = "" + this.mapData[row][col][0] + this.mapData[row][col + 1][0] + this.mapData[row + 1][col][0] + this.mapData[row + 1][col + 1][0];
+            green = parseInt(this.mapData[row][col][1], 16);
+            z = parseInt(this.mapData[row][col][2], 16);
             _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
           }
           return _results2;
@@ -391,15 +394,15 @@
       }
       return _results;
     };
-    Map.prototype.readCross = function(map, m) {
+    Map.prototype.readCross = function() {
       var col, green, row, type, z, _ref, _results, _step;
       _results = [];
-      for (row = 1, _ref = map.height - 2, _step = 2; 1 <= _ref ? row <= _ref : row >= _ref; row += _step) {
+      for (row = 1, _ref = this.map.height - 2, _step = 2; 1 <= _ref ? row <= _ref : row >= _ref; row += _step) {
         _results.push((function() {
           var _ref2, _results2, _step2;
           _results2 = [];
-          for (col = 1, _ref2 = map.width - 2, _step2 = 2; 1 <= _ref2 ? col <= _ref2 : col >= _ref2; col += _step2) {
-            _results2.push(m[row][col][0] !== "00" ? (type = "" + m[row - 1][col][0] + m[row][col + 1][0] + m[row + 1][col][0] + m[row][col - 1][0], green = parseInt(m[row][col][1], 16), z = parseInt(m[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z))) : void 0);
+          for (col = 1, _ref2 = this.map.width - 2, _step2 = 2; 1 <= _ref2 ? col <= _ref2 : col >= _ref2; col += _step2) {
+            _results2.push(this.mapData[row][col][0] !== "00" ? (type = "" + this.mapData[row - 1][col][0] + this.mapData[row][col + 1][0] + this.mapData[row + 1][col][0] + this.mapData[row][col - 1][0], green = parseInt(this.mapData[row][col][1], 16), z = parseInt(this.mapData[row][col][2], 16), this.tiles.push(new Tile(this.sprite, type, row / 2, col / 2, green, z))) : void 0);
           }
           return _results2;
         }).call(this));
@@ -747,7 +750,7 @@
   stateclass["jumpnrun"] = StateJumpNRun = (function() {
     __extends(StateJumpNRun, State);
     function StateJumpNRun(parent) {
-      var i, jumpnrunSprite;
+      var customReadFunction, i, jumpnrunSprite;
       this.parent = parent;
       this.hero = new Hero(this.parent.eventmanager, this.parent.keyboard);
       this.camera = new Camera({
@@ -776,9 +779,27 @@
           "bb": 11
         }
       });
+      customReadFunction = function() {
+        var col, green, row, type, z, _ref, _results;
+        _results = [];
+        for (row = 0, _ref = this.map.height - 1; 0 <= _ref ? row <= _ref : row >= _ref; 0 <= _ref ? row++ : row--) {
+          _results.push((function() {
+            var _ref2, _results2;
+            _results2 = [];
+            for (col = 0, _ref2 = this.map.width - 1; 0 <= _ref2 ? col <= _ref2 : col >= _ref2; 0 <= _ref2 ? col++ : col--) {
+              type = "" + this.mapData[row][col][0];
+              green = parseInt(this.mapData[row][col][1], 16);
+              z = parseInt(this.mapData[row][col][2], 16);
+              _results2.push(this.tiles.push(new Tile(this.sprite, type, row, col, green, z)));
+            }
+            return _results2;
+          }).call(this));
+        }
+        return _results;
+      };
       this.background = new Map({
         "mapfile": "assets/jumpnrun_map.png",
-        "pattern": "simple",
+        "pattern": customReadFunction,
         "sprite": jumpnrunSprite
       });
       this.spaceships = [];

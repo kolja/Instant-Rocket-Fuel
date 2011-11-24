@@ -27,9 +27,19 @@ stateclass["jumpnrun"] = class StateJumpNRun extends State
         "aa": 10
         "bb": 11
 
+    # this whole function can actually be replaced by the string "sinple"
+    # you can, however use it to override the Maps standard Mapfile interpretation mechanism.
+    customReadFunction = ->
+      for row in [0..@map.height-1] 
+        for col in [0..@map.width-1]
+          type = "#{@mapData[row][col][0]}"
+          green = parseInt( @mapData[row][col][1], 16 )
+          z = parseInt( @mapData[row][col][2], 16 )
+          @tiles.push( new Tile( @sprite, type, row, col, green, z ))
+
     @background = new Map
       "mapfile": "assets/jumpnrun_map.png"
-      "pattern": "simple"
+      "pattern": customReadFunction
       "sprite": jumpnrunSprite
     
     @spaceships = []
