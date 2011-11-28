@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, Camera, Eventmanager, Game, Hero, Keyboard, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
+  var Animation, Asteroids, Background, BoundingBox, Camera, Eventmanager, Game, Hero, Keyboard, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -156,6 +156,29 @@
       return "(" + this.x + ", " + this.y + ")";
     };
     return Vector;
+  })();
+  BoundingBox = (function() {
+    function BoundingBox(coor, dim) {
+      var _ref, _ref2;
+      this.coor = coor;
+      this.dim = dim;
+            if ((_ref = this.coor) != null) {
+        _ref;
+      } else {
+        this.coor = new Vector;
+      };
+            if ((_ref2 = this.dim) != null) {
+        _ref2;
+      } else {
+        this.dim = new Vector;
+      };
+    }
+    BoundingBox.prototype.intersects = function(otherBB) {};
+    BoundingBox.prototype.render = function(ctx) {
+      ctx.strokeStyle("red");
+      return ctx.strokeRect(this.coor.x, this.coor.y, this.dim.x, this.dim.y);
+    };
+    return BoundingBox;
   })();
   Eventmanager = (function() {
     function Eventmanager() {
