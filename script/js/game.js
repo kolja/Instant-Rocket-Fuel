@@ -320,7 +320,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tile = _ref[_i];
-        _results.push(tile.squaredDistanceTo(camera.coor) < 100000 ? tile.render(ctx) : void 0);
+        _results.push(tile.squaredDistanceTo(camera.coor) < 500000 ? tile.render(ctx) : void 0);
       }
       return _results;
     };
@@ -710,6 +710,11 @@
     function StateIso(parent) {
       var beach3d;
       this.parent = parent;
+      this.camera = new Camera({
+        "projection": "iso",
+        "vpWidth": this.parent.width,
+        "vpHeight": this.parent.height
+      });
       beach3d = new Sprite({
         "texture": "assets/images/beach3d.png",
         "width": 107,
@@ -743,7 +748,9 @@
     }
     StateIso.prototype.update = function(delta) {};
     StateIso.prototype.render = function(ctx) {
-      return this.background.render(ctx);
+      return this.camera.apply(ctx, __bind(function() {
+        return this.background.render(ctx, this.camera);
+      }, this));
     };
     return StateIso;
   })();

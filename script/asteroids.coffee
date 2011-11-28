@@ -24,7 +24,7 @@ class Asteroids extends Game
     @stateManager.currentState.render @ctx
     super()
     
-  
+    
 $ ->
   asteroids = new Asteroids( 1024, 768 )
   asteroids.start()

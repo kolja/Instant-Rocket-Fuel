@@ -27,7 +27,7 @@ class Map
 
   render: (ctx, camera) ->
     for tile in @tiles
-      if tile.squaredDistanceTo(camera.coor) < 100000
+      if tile.squaredDistanceTo(camera.coor) < 500000
         tile.render(ctx)
 
   # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy

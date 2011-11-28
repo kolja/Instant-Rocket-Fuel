@@ -8,7 +8,7 @@ class Camera
     @vpHeight = hash["vpHeight"]
     @zoomFactor = hash["zoomFactor"] ? 1
     @coor = new Vector( 100, 100 )
-        
+    
   update: (delta) ->
 
   apply: (ctx, callback) ->

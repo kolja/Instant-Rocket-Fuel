@@ -2,6 +2,9 @@
 stateclass["iso"] = class StateIso extends State
   constructor: (@parent) ->
     
+    @camera = new Camera {"projection": "iso", "vpWidth": @parent.width, "vpHeight": @parent.height}
+    # @camera.coor = new Vector(2500,1050)
+    
     beach3d = new Sprite
       "texture": "assets/images/beach3d.png"
       "width": 107
@@ -35,4 +38,5 @@ stateclass["iso"] = class StateIso extends State
   update: (delta) ->
     
   render: (ctx) ->
-    @background.render(ctx)
+    @camera.apply ctx, =>
+      @background.render(ctx, @camera)
