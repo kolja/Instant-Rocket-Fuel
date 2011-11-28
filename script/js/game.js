@@ -174,9 +174,12 @@
       };
     }
     BoundingBox.prototype.intersects = function(otherBB) {};
-    BoundingBox.prototype.render = function(ctx) {
-      ctx.strokeStyle("red");
-      return ctx.strokeRect(this.coor.x, this.coor.y, this.dim.x, this.dim.y);
+    BoundingBox.prototype.render = function(ctx, color) {
+      if (color == null) {
+        color = "#f00";
+      }
+      ctx.strokeStyle = color;
+      return ctx.strokeRect(this.coor.x - this.dim.x / 2, this.coor.y - this.dim.y / 2, this.dim.x, this.dim.y);
     };
     return BoundingBox;
   })();
@@ -343,7 +346,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tile = _ref[_i];
-        _results.push(tile.squaredDistanceTo(camera.coor) < 500000 ? tile.render(ctx) : void 0);
+        _results.push(tile.squaredDistanceTo(camera.coor) < 100000 ? tile.render(ctx) : void 0);
       }
       return _results;
     };
@@ -450,21 +453,22 @@
       this.green = green != null ? green : 0;
       this.z = z != null ? z : 0;
       this.neighbor = [];
+      this.x = this.col * this.sprite.innerWidth + this.sprite.innerWidth / 2;
+      this.y = this.row * this.sprite.innerHeight + this.sprite.innerHeight / 2;
+      this.bb = new BoundingBox(new Vector(this.x, this.y), new Vector(this.sprite.innerWidth, this.sprite.innerHeight));
     }
     Tile.prototype.isWalkable = function() {
       return this.green === 0;
     };
     Tile.prototype.squaredDistanceTo = function(vec) {
-      var x, y;
-      x = this.col * this.sprite.innerWidth + this.sprite.innerWidth / 2;
-      y = this.row * this.sprite.innerHeight + this.sprite.innerHeight / 2;
-      return vec.subtract(new Vector(x, y)).lengthSquared();
+      return vec.subtract(new Vector(this.x, this.y)).lengthSquared();
     };
     Tile.prototype.render = function(ctx) {
       ctx.save();
-      ctx.translate(this.col * this.sprite.innerWidth - this.z, this.row * this.sprite.innerHeight - this.z);
+      ctx.translate(this.x - this.z, this.y - this.z);
       this.sprite.render(this.type, ctx);
-      return ctx.restore();
+      ctx.restore();
+      return this.bb.render(ctx, "grey");
     };
     return Tile;
   })();
@@ -997,6 +1001,7 @@
       this.speed = new Vector(0, 0);
       this.force = new Vector(0.01, 0);
       this.gravity = new Vector(0, 0.01);
+      this.bb = new BoundingBox(this.coor, new Vector(50, 50));
       this.eventmanager.register("touchdown", this.touchdown);
     }
     Hero.prototype.touchdown = function() {
@@ -1026,13 +1031,15 @@
         this.state = "jumping";
         this.speed.y = -0.5;
       }
-      return this.coor = this.coor.add(this.speed.mult(delta));
+      this.coor = this.coor.add(this.speed.mult(delta));
+      return this.bb.coor = this.coor;
     };
     Hero.prototype.render = function(ctx) {
       ctx.save();
       ctx.translate(this.coor.x, this.coor.y);
       this.sprite.render(this.state, ctx);
-      return ctx.restore();
+      ctx.restore();
+      return this.bb.render(ctx);
     };
     return Hero;
   })();

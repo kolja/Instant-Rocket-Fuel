@@ -7,6 +7,6 @@ class BoundingBox
   intersects: (otherBB) ->
     # to be implemented 
   
-  render: (ctx) ->
-    ctx.strokeStyle "red"
-    ctx.strokeRect @coor.x, @coor.y, @dim.x, @dim.y
+  render: (ctx, color="#f00") ->
+    ctx.strokeStyle = color
+    ctx.strokeRect @coor.x - @dim.x/2, @coor.y - @dim.y/2, @dim.x, @dim.y

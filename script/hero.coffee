@@ -17,6 +17,8 @@ class Hero
     @force = new Vector( 0.01, 0 )
     @gravity = new Vector( 0, 0.01 )
 
+    @bb = new BoundingBox @coor, new Vector( 50, 50 )
+
     # event Manager
     @eventmanager.register "touchdown", @touchdown
   
@@ -50,12 +52,17 @@ class Hero
       @speed.y = -0.5
       
     @coor = @coor.add( @speed.mult delta )
+    @bb.coor = @coor
 
   render: (ctx) ->
     ctx.save()
     ctx.translate @coor.x, @coor.y
     @sprite.render( @state, ctx )
     ctx.restore()
+    
+    # the BoundingBox has Coordinates. A sprite doesn't. So the bounding-box is rendered outside of the save/resotore area.
+    # it will take care of the propper displacement itself.
+    @bb.render ctx
 
 
 
