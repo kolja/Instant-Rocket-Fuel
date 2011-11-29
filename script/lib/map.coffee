@@ -94,6 +94,7 @@ class Tile
     @x = @col * @sprite.innerWidth + @sprite.innerWidth/2
     @y = @row * @sprite.innerHeight + @sprite.innerHeight/2
     @bb = new BoundingBox new Vector( @x, @y ), new Vector( @sprite.innerWidth, @sprite.innerHeight )
+    @bb.color = "green"
     
   isWalkable: -> 
     @green is 0
@@ -107,4 +108,4 @@ class Tile
     @sprite.render( @type, ctx )
     ctx.restore()
     
-    @bb.render ctx, "grey"
+    @bb.render ctx

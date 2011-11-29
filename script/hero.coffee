@@ -18,6 +18,7 @@ class Hero
     @gravity = new Vector( 0, 0.01 )
 
     @bb = new BoundingBox @coor, new Vector( 50, 50 )
+    @bb.color = "red"
 
     # event Manager
     @eventmanager.register "touchdown", @touchdown
@@ -28,10 +29,11 @@ class Hero
   update: (delta, map) ->
     
     # apply gravity
-    walkable = map.tileAtVector(@coor).neighbor["s"].isWalkable?() 
-    if walkable
-      @speed.add_ @gravity
-    else
+    tileBelow = map.tileAtVector(@coor).neighbor["s"]
+    # tileBelow.bb.color = "red"
+    @speed.add_ @gravity
+
+    if @bb.intersect(tileBelow.bb) and not tileBelow.isWalkable?()
       @speed.y = 0
       @state = "normal"
     
@@ -49,7 +51,7 @@ class Hero
     # jump
     if @keyboard.key("space") and @state isnt "jumping"
       @state = "jumping"
-      @speed.y = -0.5
+      @speed.y = -0.7
       
     @coor = @coor.add( @speed.mult delta )
     @bb.coor = @coor

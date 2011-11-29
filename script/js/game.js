@@ -158,10 +158,11 @@
     return Vector;
   })();
   BoundingBox = (function() {
-    function BoundingBox(coor, dim) {
+    function BoundingBox(coor, dim, color) {
       var _ref, _ref2;
       this.coor = coor;
       this.dim = dim;
+      this.color = color != null ? color : "grey";
             if ((_ref = this.coor) != null) {
         _ref;
       } else {
@@ -173,12 +174,41 @@
         this.dim = new Vector;
       };
     }
-    BoundingBox.prototype.intersects = function(otherBB) {};
-    BoundingBox.prototype.render = function(ctx, color) {
-      if (color == null) {
-        color = "#f00";
+    BoundingBox.prototype.intersect = function(otherBB) {
+      return this.intersectv(otherBB) && this.intersecth(otherBB);
+    };
+    BoundingBox.prototype.intersectv = function(otherBB) {
+      if (this.coor.y < otherBB.coor.y) {
+        if (((this.dim.y + otherBB.dim.y) / 2) < (otherBB.coor.y - this.coor.y)) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        if (((this.dim.y + otherBB.dim.y) / 2) < (this.coor.y - otherBB.coor.y)) {
+          return false;
+        } else {
+          return true;
+        }
       }
-      ctx.strokeStyle = color;
+    };
+    BoundingBox.prototype.intersecth = function(otherBB) {
+      if (this.coor.x < otherBB.coor.x) {
+        if (((this.dim.x + otherBB.dim.x) / 2) < (otherBB.coor.x - this.coor.x)) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        if (((this.dim.x + otherBB.dim.x) / 2) < (this.coor.x - otherBB.coor.x)) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    };
+    BoundingBox.prototype.render = function(ctx) {
+      ctx.strokeStyle = this.color;
       return ctx.strokeRect(this.coor.x - this.dim.x / 2, this.coor.y - this.dim.y / 2, this.dim.x, this.dim.y);
     };
     return BoundingBox;
@@ -456,6 +486,7 @@
       this.x = this.col * this.sprite.innerWidth + this.sprite.innerWidth / 2;
       this.y = this.row * this.sprite.innerHeight + this.sprite.innerHeight / 2;
       this.bb = new BoundingBox(new Vector(this.x, this.y), new Vector(this.sprite.innerWidth, this.sprite.innerHeight));
+      this.bb.color = "green";
     }
     Tile.prototype.isWalkable = function() {
       return this.green === 0;
@@ -468,7 +499,7 @@
       ctx.translate(this.x - this.z, this.y - this.z);
       this.sprite.render(this.type, ctx);
       ctx.restore();
-      return this.bb.render(ctx, "grey");
+      return this.bb.render(ctx);
     };
     return Tile;
   })();
@@ -1002,17 +1033,17 @@
       this.force = new Vector(0.01, 0);
       this.gravity = new Vector(0, 0.01);
       this.bb = new BoundingBox(this.coor, new Vector(50, 50));
+      this.bb.color = "red";
       this.eventmanager.register("touchdown", this.touchdown);
     }
     Hero.prototype.touchdown = function() {
       return console.log("Hero says: Touchdown occurred");
     };
     Hero.prototype.update = function(delta, map) {
-      var walkable, _base;
-      walkable = typeof (_base = map.tileAtVector(this.coor).neighbor["s"]).isWalkable === "function" ? _base.isWalkable() : void 0;
-      if (walkable) {
-        this.speed.add_(this.gravity);
-      } else {
+      var tileBelow;
+      tileBelow = map.tileAtVector(this.coor).neighbor["s"];
+      this.speed.add_(this.gravity);
+      if (this.bb.intersect(tileBelow.bb) && !(typeof tileBelow.isWalkable === "function" ? tileBelow.isWalkable() : void 0)) {
         this.speed.y = 0;
         this.state = "normal";
       }
@@ -1029,7 +1060,7 @@
       }
       if (this.keyboard.key("space") && this.state !== "jumping") {
         this.state = "jumping";
-        this.speed.y = -0.5;
+        this.speed.y = -0.7;
       }
       this.coor = this.coor.add(this.speed.mult(delta));
       return this.bb.coor = this.coor;
