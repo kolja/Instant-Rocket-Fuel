@@ -8,20 +8,20 @@ class Asteroids extends Game
   constructor: (width, height) ->
     super width, height
     
-    @eventmanager = new Eventmanager
+    @eventManager = new EventManager
     @keyboard = new Keyboard
     
-    @stateManager = new Statemanager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Gamestates or Levels
-    @stateManager.setState "jumpnrun"
-    
-    
+    @sceneManager = new SceneManager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Scenes or Levels
+    @sceneManager.setScene "jumpnrun"
+    @renderTimer = false
+
   update: ->
     super()
-    @stateManager.currentState.update @timer.delta
+    @sceneManager.currentScene.update @timer.delta
 
   render: ->
     @ctx.clearRect 0, 0, @width, @height
-    @stateManager.currentState.render @ctx
+    @sceneManager.currentScene.render @ctx
     super()
     
     

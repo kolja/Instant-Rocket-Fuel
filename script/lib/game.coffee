@@ -8,6 +8,7 @@ class Game
     @ctx.font = '400 18px Helvetica, sans-serif'
     @loop = null
     @timer = new Timer
+    @renderTimer = false
 
   gameloop: =>
     @update()
@@ -23,4 +24,4 @@ class Game
     @timer.punch()
 
   render: ->
-    @ctx.fillText( @timer.fps().toFixed(1), 960, 20 )
+    if @renderTimer then @ctx.fillText( @timer.fps().toFixed(1), @width - 50, 20 )

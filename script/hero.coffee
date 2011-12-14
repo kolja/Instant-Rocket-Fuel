@@ -1,7 +1,7 @@
 
 
 class Hero
-  constructor: (@eventmanager, @keyboard) ->
+  constructor: (@eventManager, @keyboard) ->
     
     @state = "normal"
     @sprite = new Sprite
@@ -21,7 +21,7 @@ class Hero
     @bb.color = "red"
 
     # event Manager
-    @eventmanager.register "touchdown", @touchdown
+    @eventManager.register "touchdown", @touchdown
   
   touchdown: ->
     console.log "Hero says: Touchdown occurred" 

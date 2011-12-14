@@ -1,5 +1,5 @@
 
-class Eventmanager
+class EventManager
   constructor: ->
     @eventlist = {} 
   

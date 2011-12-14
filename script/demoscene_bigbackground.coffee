@@ -1,5 +1,5 @@
 
-stateclass["bigbg"] = class StateBigBackground extends State
+sceneclass["bigbg"] = class SceneBigBackground extends Scene
   constructor: (@parent) ->
     
     console.log "width: #{@parent.width} -- height: #{@parent.height}" 

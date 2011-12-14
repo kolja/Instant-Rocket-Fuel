@@ -1,5 +1,5 @@
 (function() {
-  var Animation, Asteroids, Background, BoundingBox, Camera, Eventmanager, Game, Hero, Keyboard, Map, Shape, Spaceship, Sprite, State, StateBigBackground, StateHeight, StateIso, StateJumpNRun, StateMaze, Statemanager, Tile, Timer, Vector, root, stateclass;
+  var Animation, Asteroids, Background, BoundingBox, Camera, EventManager, Game, Hero, Keyboard, Map, Scene, SceneBigBackground, SceneHeight, SceneIso, SceneJumpNRun, SceneManager, SceneMaze, Shape, Spaceship, Sprite, Tile, Timer, Vector, root, sceneclass;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -9,7 +9,7 @@
     return child;
   };
   root = this;
-  stateclass = {};
+  sceneclass = {};
   Array.prototype.shuffle = function() {
     return this.sort(function() {
       return 0.5 - Math.random();
@@ -213,17 +213,17 @@
     };
     return BoundingBox;
   })();
-  Eventmanager = (function() {
-    function Eventmanager() {
+  EventManager = (function() {
+    function EventManager() {
       this.eventlist = {};
     }
-    Eventmanager.prototype.register = function(event, callback) {
+    EventManager.prototype.register = function(event, callback) {
       if (this.eventlist[event] == null) {
         this.eventlist[event] = [];
       }
       return this.eventlist[event].push(callback);
     };
-    Eventmanager.prototype.trigger = function(event, origin) {
+    EventManager.prototype.trigger = function(event, origin) {
       var callback, _i, _len, _ref, _results;
       _ref = this.eventlist[event];
       _results = [];
@@ -233,7 +233,7 @@
       }
       return _results;
     };
-    return Eventmanager;
+    return EventManager;
   })();
   Keyboard = (function() {
     function Keyboard() {
@@ -326,6 +326,7 @@
       this.ctx.font = '400 18px Helvetica, sans-serif';
       this.loop = null;
       this.timer = new Timer;
+      this.renderTimer = false;
     }
     Game.prototype.gameloop = function() {
       this.update();
@@ -341,7 +342,9 @@
       return this.timer.punch();
     };
     Game.prototype.render = function() {
-      return this.ctx.fillText(this.timer.fps().toFixed(1), 960, 20);
+      if (this.renderTimer) {
+        return this.ctx.fillText(this.timer.fps().toFixed(1), this.width - 50, 20);
+      }
     };
     return Game;
   })();
@@ -614,33 +617,33 @@
     };
     return Animation;
   })();
-  State = (function() {
-    function State() {}
-    State.prototype.update = function() {};
-    State.prototype.draw = function() {};
-    return State;
+  Scene = (function() {
+    function Scene() {}
+    Scene.prototype.update = function() {};
+    Scene.prototype.render = function() {};
+    return Scene;
   })();
-  Statemanager = (function() {
-    function Statemanager(parent, states) {
-      var state, _i, _len;
+  SceneManager = (function() {
+    function SceneManager(parent, scenes) {
+      var scene, _i, _len;
       this.parent = parent;
-      this.statearray = {};
-      this.currentState = null;
-      for (_i = 0, _len = states.length; _i < _len; _i++) {
-        state = states[_i];
-        this.addState(state);
+      this.scenearray = {};
+      this.currentScene = null;
+      for (_i = 0, _len = scenes.length; _i < _len; _i++) {
+        scene = scenes[_i];
+        this.addScene(scene);
       }
     }
-    Statemanager.prototype.addState = function(state) {
-      this.statearray[state] = new stateclass[state](this.parent);
-      if (this.currentState == null) {
-        return this.setState(state);
+    SceneManager.prototype.addScene = function(scene) {
+      this.scenearray[scene] = new sceneclass[scene](this.parent);
+      if (this.currentScene == null) {
+        return this.setScene(scene);
       }
     };
-    Statemanager.prototype.setState = function(state) {
-      return this.currentState = this.statearray[state];
+    SceneManager.prototype.setScene = function(scene) {
+      return this.currentScene = this.scenearray[scene];
     };
-    return Statemanager;
+    return SceneManager;
   })();
   Camera = (function() {
     function Camera(hash) {
@@ -674,18 +677,19 @@
     __extends(Asteroids, Game);
     function Asteroids(width, height) {
       Asteroids.__super__.constructor.call(this, width, height);
-      this.eventmanager = new Eventmanager;
+      this.eventManager = new EventManager;
       this.keyboard = new Keyboard;
-      this.stateManager = new Statemanager(this, ["bigbg", "jumpnrun", "iso", "maze", "height"]);
-      this.stateManager.setState("jumpnrun");
+      this.sceneManager = new SceneManager(this, ["bigbg", "jumpnrun", "iso", "maze", "height"]);
+      this.sceneManager.setScene("jumpnrun");
+      this.renderTimer = false;
     }
     Asteroids.prototype.update = function() {
       Asteroids.__super__.update.call(this);
-      return this.stateManager.currentState.update(this.timer.delta);
+      return this.sceneManager.currentScene.update(this.timer.delta);
     };
     Asteroids.prototype.render = function() {
       this.ctx.clearRect(0, 0, this.width, this.height);
-      this.stateManager.currentState.render(this.ctx);
+      this.sceneManager.currentScene.render(this.ctx);
       return Asteroids.__super__.render.call(this);
     };
     return Asteroids;
@@ -695,9 +699,9 @@
     asteroids = new Asteroids(1024, 768);
     return asteroids.start();
   });
-  stateclass["bigbg"] = StateBigBackground = (function() {
-    __extends(StateBigBackground, State);
-    function StateBigBackground(parent) {
+  sceneclass["bigbg"] = SceneBigBackground = (function() {
+    __extends(SceneBigBackground, Scene);
+    function SceneBigBackground(parent) {
       var backgroundsprite, i;
       this.parent = parent;
       console.log("width: " + this.parent.width + " -- height: " + this.parent.height);
@@ -712,7 +716,7 @@
         this.spaceships[i] = new Spaceship;
       }
     }
-    StateBigBackground.prototype.update = function(delta) {
+    SceneBigBackground.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
       _ref = this.spaceships;
       _results = [];
@@ -722,7 +726,7 @@
       }
       return _results;
     };
-    StateBigBackground.prototype.render = function(ctx) {
+    SceneBigBackground.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
       this.background.render(ctx);
       _ref = this.spaceships;
@@ -733,11 +737,11 @@
       }
       return _results;
     };
-    return StateBigBackground;
+    return SceneBigBackground;
   })();
-  stateclass["height"] = StateHeight = (function() {
-    __extends(StateHeight, State);
-    function StateHeight(parent) {
+  sceneclass["height"] = SceneHeight = (function() {
+    __extends(SceneHeight, Scene);
+    function SceneHeight(parent) {
       var simple;
       this.parent = parent;
       simple = new Sprite({
@@ -757,15 +761,15 @@
         "sprite": simple
       });
     }
-    StateHeight.prototype.update = function(delta) {};
-    StateHeight.prototype.render = function(ctx) {
+    SceneHeight.prototype.update = function(delta) {};
+    SceneHeight.prototype.render = function(ctx) {
       return this.background.render(ctx);
     };
-    return StateHeight;
+    return SceneHeight;
   })();
-  stateclass["iso"] = StateIso = (function() {
-    __extends(StateIso, State);
-    function StateIso(parent) {
+  sceneclass["iso"] = SceneIso = (function() {
+    __extends(SceneIso, Scene);
+    function SceneIso(parent) {
       var beach3d;
       this.parent = parent;
       this.camera = new Camera({
@@ -804,20 +808,20 @@
         "sprite": beach3d
       });
     }
-    StateIso.prototype.update = function(delta) {};
-    StateIso.prototype.render = function(ctx) {
+    SceneIso.prototype.update = function(delta) {};
+    SceneIso.prototype.render = function(ctx) {
       return this.camera.apply(ctx, __bind(function() {
         return this.background.render(ctx, this.camera);
       }, this));
     };
-    return StateIso;
+    return SceneIso;
   })();
-  stateclass["jumpnrun"] = StateJumpNRun = (function() {
-    __extends(StateJumpNRun, State);
-    function StateJumpNRun(parent) {
+  sceneclass["jumpnrun"] = SceneJumpNRun = (function() {
+    __extends(SceneJumpNRun, Scene);
+    function SceneJumpNRun(parent) {
       var customReadFunction, i, jumpnrunSprite;
       this.parent = parent;
-      this.hero = new Hero(this.parent.eventmanager, this.parent.keyboard);
+      this.hero = new Hero(this.parent.eventManager, this.parent.keyboard);
       this.camera = new Camera({
         "projection": "normal",
         "vpWidth": this.parent.width,
@@ -869,10 +873,10 @@
       });
       this.spaceships = [];
       for (i = 0; i <= 3; i++) {
-        this.spaceships[i] = new Spaceship(this.parent.eventmanager, this.parent.keyboard);
+        this.spaceships[i] = new Spaceship(this.parent.eventManager, this.parent.keyboard);
       }
     }
-    StateJumpNRun.prototype.update = function(delta) {
+    SceneJumpNRun.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
       this.hero.update(delta, this.background);
       this.camera.coor = this.hero.coor;
@@ -884,7 +888,7 @@
       }
       return _results;
     };
-    StateJumpNRun.prototype.render = function(ctx) {
+    SceneJumpNRun.prototype.render = function(ctx) {
       return this.camera.apply(ctx, __bind(function() {
         var spaceship, _i, _len, _ref, _results;
         this.background.render(ctx, this.camera);
@@ -898,11 +902,11 @@
         return _results;
       }, this));
     };
-    return StateJumpNRun;
+    return SceneJumpNRun;
   })();
-  stateclass["maze"] = StateMaze = (function() {
-    __extends(StateMaze, State);
-    function StateMaze(parent) {
+  sceneclass["maze"] = SceneMaze = (function() {
+    __extends(SceneMaze, Scene);
+    function SceneMaze(parent) {
       var i, maze;
       this.parent = parent;
       maze = new Sprite({
@@ -940,7 +944,7 @@
         this.spaceships[i] = new Spaceship;
       }
     }
-    StateMaze.prototype.update = function(delta) {
+    SceneMaze.prototype.update = function(delta) {
       var spaceship, _i, _len, _ref, _results;
       _ref = this.spaceships;
       _results = [];
@@ -950,7 +954,7 @@
       }
       return _results;
     };
-    StateMaze.prototype.render = function(ctx) {
+    SceneMaze.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
       this.background.render(ctx);
       _ref = this.spaceships;
@@ -961,11 +965,11 @@
       }
       return _results;
     };
-    return StateMaze;
+    return SceneMaze;
   })();
   Spaceship = (function() {
-    function Spaceship(eventmanager, keyboard) {
-      this.eventmanager = eventmanager;
+    function Spaceship(eventManager, keyboard) {
+      this.eventManager = eventManager;
       this.keyboard = keyboard;
       this.state = "normal";
       this.sprite = new Sprite({
@@ -985,7 +989,7 @@
       if (this.coor.x > 1024) {
         this.speed.x = this.speed.x * -1;
         this.coor.x = 1024;
-        this.eventmanager.trigger("touchdown");
+        this.eventManager.trigger("touchdown");
       }
       if (this.coor.x < 0) {
         this.speed.x = this.speed.x * -1;
@@ -1015,8 +1019,8 @@
     return Spaceship;
   })();
   Hero = (function() {
-    function Hero(eventmanager, keyboard) {
-      this.eventmanager = eventmanager;
+    function Hero(eventManager, keyboard) {
+      this.eventManager = eventManager;
       this.keyboard = keyboard;
       this.state = "normal";
       this.sprite = new Sprite({
@@ -1034,7 +1038,7 @@
       this.gravity = new Vector(0, 0.01);
       this.bb = new BoundingBox(this.coor, new Vector(50, 50));
       this.bb.color = "red";
-      this.eventmanager.register("touchdown", this.touchdown);
+      this.eventManager.register("touchdown", this.touchdown);
     }
     Hero.prototype.touchdown = function() {
       return console.log("Hero says: Touchdown occurred");

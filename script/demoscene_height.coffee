@@ -1,5 +1,5 @@
 
-stateclass["height"] = class StateHeight extends State
+sceneclass["height"] = class SceneHeight extends Scene
   constructor: (@parent) ->
     
     simple = new Sprite

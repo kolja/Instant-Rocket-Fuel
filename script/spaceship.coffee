@@ -2,7 +2,7 @@
 
 class Spaceship
 
-  constructor: (@eventmanager, @keyboard) ->
+  constructor: (@eventManager, @keyboard) ->
     @state = "normal"
     @sprite = new Sprite
       "texture": "assets/images/test.png"
@@ -22,7 +22,7 @@ class Spaceship
     if @coor.x > 1024
       @speed.x = @speed.x * -1
       @coor.x = 1024
-      @eventmanager.trigger "touchdown"
+      @eventManager.trigger "touchdown"
     if @coor.x < 0
       @speed.x = @speed.x * -1
       @coor.x = 0

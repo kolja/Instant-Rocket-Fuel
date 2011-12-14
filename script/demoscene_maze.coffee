@@ -1,5 +1,5 @@
 
-stateclass["maze"] = class StateMaze extends State
+sceneclass["maze"] = class SceneMaze extends Scene
   constructor: (@parent) ->
     
     maze = new Sprite

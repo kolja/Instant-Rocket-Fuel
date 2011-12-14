@@ -1,5 +1,5 @@
 
-stateclass["iso"] = class StateIso extends State
+sceneclass["iso"] = class SceneIso extends Scene
   constructor: (@parent) ->
     
     @camera = new Camera {"projection": "iso", "vpWidth": @parent.width, "vpHeight": @parent.height}
