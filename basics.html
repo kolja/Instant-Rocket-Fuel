@@ -21,41 +21,108 @@
     Perhaps you have never even programmed anything before and you are worried that writing code may not be your thing?</p>
 
     <p>I'm telling you: it's not hard, really.</p> 
-    <p>Also, "Instant Rocket Fuel" will provide you with a foundation and some building blocks – like Lego – that you can use to build your game, such that you only need to focus on the stuff that is specific to your game. The parts that are fun.</p>
+    <p>Instant Rocket Fuel will provide you with a foundation and some building blocks – like Lego – that you can use to build your game, such that you can focus on the stuff that is specific to your game: the fun part.</p>
 
     <p>Yet, there is nothing in Instant Rocket fuel that you absolutely <em>have</em> to use. You can use some of the parts and choose to provide others yourself. Its all just there to help you get your game off the ground. In the end, it is all just JavaScript, and the HTML Canvas Element.</p>
 
     <h2>The Game Loop</h2>
 
-    <p>First off, you'll need some kind of game loop</p>
+    <p>Lets suppose, you made up your mind to create the game "Hundinvaders", in which a fleet of dogs is approaching from outer space, littering the sidewalks. The player is in control of batman, who pushes a wheelbarrow around to prevent the worst.</p>
+    <p>Creating such a game (any game, really) is much like creating a stop-motion film. You place some objects on a stage and take a picture. Then you move your objects a tiny bit, and take a picture again. And so on...</p>
     
+    <img src="images/basics1.png" alt="stop motion">
+    
+    <p>In Instant Rocket Fuel this contiuous <em>updating-the-model / taking-a-picture</em> is taken care of by the Game class. All you have to do is provide two functions update and render, and they will be called over and over again, as fast as possible.</p>
     <pre><code>
+      class Hundinvaders extends Game
 
-      class Asteroids extends Game
+        constructor: (width, height) ->
+          super width, height
+          
+          @batman = new Batman
+          @fleet = new Fleet
+
+        update: ->
+          super()
+          @fleet.update @timer.delta
+          @batman.update @timer.delta
+
+        render: ->
+          super()
+          @fleet.render @ctx
+          @batman.render @ctx
+
+      jQuery ->
+        hundinvaders = new Hundinvaders( 1024, 768 )
+        hundinvaders.start()
+    </code></pre>
+
+    <p>Notice how your class "Hundinvaders" extends Game, thereby inheriting the game-loop functionality.</p>
+    <p>In the constructor, new batman and fleet objects are created.</p>
+    <p>In the update function you simply call update on all the objects in your game. Batman and the fleet also provide an update function, where they either update themselves or pass the call on to other objects.<br>
+      For example, the fleet may maintain a collection of invading dogs objects, and when its update method is called, it will in turn call update on each of them.</p>
+    <p>Note how the update call takes a "timer.delta" as parameter (read Time based vs. Frame based games below for more info on this) and render 
+      is passed "ctx" a reference to the canvas' elements context.</p>
+
+    <div class="box">
+      <h2>Time based vs. Frame based games</h2>
+      <p>The Inst.Rocket Fuels game loop tries to call update and render as fast as your computer will allow. On a fast computer
+        this can be hundreds of times per second. Obviously, Batman would become frustrated if the dogs came rushing down from space just because 
+        the computer he is running on is so incredibly fast. <br>
+        To make him move at just the right speed, we need to know how long one update/render cycle takes and update his movement accordingly:
+        This is called "time based" animation – as opposed to "frame based", where one would hardcode the distance batman moves with every frame and then 
+        call update and render at a fixed framerate. <br>
+        IRF comes with a timer that is reset every time update is called. The idea is to pass the timer.delta (the time between the last two calls to update)
+        whenever you call update yourself.
+        </p>
+    </div>
+
+    <h2>The Scene Manager</h2>
+
+    <p>That's really all there is to it. However, as your game grows, you likely want to add an intro and help screens, different levels and some pages to display highscores.<br>
+    <p>Different scenes, in a way. When one scene concludes, the curtain closes and behind it, the theatre staff will start working feverishly on rebuilding the set.</p>
+    <p>Consider this more modular game:</p>
+      
+    <pre><code>
+      class Hundinvaders extends Game
 
         constructor: (width, height) ->
           super width, height
 
+          @sceneManager = new SceneManager this, ["intro", "main", "highscore"]
+          @sceneManager.setScene "intro"
+
         update: ->
           super()
-          @batman.update @timer.delta
+          @sceneManager.currentScene.update @timer.delta
 
         render: ->
-          @ctx.clearRect 0, 0, @width, @height
           super()
+          @sceneManager.currentScene.render @ctx
 
-      $ ->
-        asteroids = new Asteroids( 1024, 768 )
-        asteroids.start()
-      
+      jQuery ->
+        hundinvaders = new Hundinvaders( 1024, 768 )
+        hundinvaders.start()
     </code></pre>
+    
+    <pre><code>
+      sceneclass["main"] = class SceneMain extends Scene
+      
+        constructor: (@parent) ->
+          @batman = new Batman
+          @fleet = new Fleet
+        
+        update: (delta) ->
+          @fleet.update delta
+          @batman.update delta
 
-    <p class="box">
-    what is a gameloop
-    </p>
-
-    <h2>Time based vs. Frame based games</h2>
-    <p>This is work in progress and im currently still writing on this section. Please be patient and come back later</p>
+        render: (ctx) ->
+          @fleet.render ctx
+          @batman.render ctx
+    </code></pre>
+    
+    <p>The specific code dealing with batman and the fleet of invading dogs has moved to the "main" scene. Now its easy to switch back and forth between
+      Scenes by calling sceneManager.setScene(). Update and render are called on whatever Scene is currently "active".</p>
   </div>
 
 </body>

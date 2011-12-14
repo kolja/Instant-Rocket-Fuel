@@ -44,3 +44,8 @@ li.input a { background-image: url( "../../assets/images/button-input.png"); }
 li.vectors a { background-image: url( "../../assets/images/button-vectors.png"); }
 li.maps a { background-image: url( "../../assets/images/button-maps.png"); }
 li.events a { background-image: url( "../../assets/images/button-events.png");}
+
+div.box {
+  background-color: #ddd;
+  padding: 20px;
+}
