@@ -13,19 +13,17 @@ class Asteroids extends Game
     
     @sceneManager = new SceneManager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Scenes or Levels
     @sceneManager.setScene "jumpnrun"
-    @renderTimer = false
 
   update: ->
     super()
     @sceneManager.currentScene.update @timer.delta
 
   render: ->
-    @ctx.clearRect 0, 0, @width, @height
-    @sceneManager.currentScene.render @ctx
     super()
+    @sceneManager.currentScene.render @ctx
+    @ctx.fillText( @timer.fps().toFixed(1), @width - 50, 20 )
     
-    
-$ ->
+jQuery ->
   asteroids = new Asteroids( 1024, 768 )
   asteroids.start()
 

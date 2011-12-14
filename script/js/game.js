@@ -326,7 +326,6 @@
       this.ctx.font = '400 18px Helvetica, sans-serif';
       this.loop = null;
       this.timer = new Timer;
-      this.renderTimer = false;
     }
     Game.prototype.gameloop = function() {
       this.update();
@@ -342,9 +341,7 @@
       return this.timer.punch();
     };
     Game.prototype.render = function() {
-      if (this.renderTimer) {
-        return this.ctx.fillText(this.timer.fps().toFixed(1), this.width - 50, 20);
-      }
+      return this.ctx.clearRect(0, 0, this.width, this.height);
     };
     return Game;
   })();
@@ -681,20 +678,19 @@
       this.keyboard = new Keyboard;
       this.sceneManager = new SceneManager(this, ["bigbg", "jumpnrun", "iso", "maze", "height"]);
       this.sceneManager.setScene("jumpnrun");
-      this.renderTimer = false;
     }
     Asteroids.prototype.update = function() {
       Asteroids.__super__.update.call(this);
       return this.sceneManager.currentScene.update(this.timer.delta);
     };
     Asteroids.prototype.render = function() {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      Asteroids.__super__.render.call(this);
       this.sceneManager.currentScene.render(this.ctx);
-      return Asteroids.__super__.render.call(this);
+      return this.ctx.fillText(this.timer.fps().toFixed(1), this.width - 50, 20);
     };
     return Asteroids;
   })();
-  $(function() {
+  jQuery(function() {
     var asteroids;
     asteroids = new Asteroids(1024, 768);
     return asteroids.start();
