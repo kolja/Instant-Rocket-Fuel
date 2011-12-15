@@ -5,7 +5,9 @@
   <title>kolja/Instant-Rocket-Fuel @ GitHub</title>
   <link rel="stylesheet" href="./stylesheets/css/site.css">
   <link rel="stylesheet" title="Solarized - Light" href="./stylesheets/css/solarized_light.css">
-  <script src="highlight.pack.js"></script>
+  <script src="https://github.com/dnagir/highlightjs-coffeescript/blob/master/lib/highlight-coffee.js" charset="utf-8"></script>
+  <script src="hightlight.pack.js"></script>
+  
   <script>
   hljs.tabReplace = '    ';
   hljs.initHighlightingOnLoad();
@@ -33,7 +35,7 @@
     <img src="images/basics1.png" alt="stop motion">
     
     <p>In Instant Rocket Fuel this contiuous <em>updating-the-model / taking-a-picture</em> is taken care of by the Game class. All you have to do is provide two functions update and render, and they will be called over and over again, as fast as possible.</p>
-    <pre><code>
+    <pre><code class="coffee">
       class Hundinvaders extends Game
 
         constructor: (width, height) ->
