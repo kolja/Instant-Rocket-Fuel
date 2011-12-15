@@ -38,12 +38,12 @@ li a {
   height: 110px;
 }
 
-li.basics a { background-image: url( "../../images/button-basics.png"); }
-li.sprites a { background-image: url( "../../images/button-sprites.png"); }
-li.input a { background-image: url( "../../images/button-input.png"); }
-li.vectors a { background-image: url( "../../images/button-vectors.png"); }
-li.maps a { background-image: url( "../../images/button-maps.png"); }
-li.events a { background-image: url( "../../images/button-events.png");}
+li.basics a { background-image: url( "../images/button-basics.png"); }
+li.sprites a { background-image: url( "../images/button-sprites.png"); }
+li.input a { background-image: url( "../images/button-input.png"); }
+li.vectors a { background-image: url( "../images/button-vectors.png"); }
+li.maps a { background-image: url( "../images/button-maps.png"); }
+li.events a { background-image: url( "../images/button-events.png");}
 
 div.box {
   background-color: #ddd;

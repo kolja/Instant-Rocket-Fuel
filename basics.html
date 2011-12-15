@@ -3,7 +3,7 @@
 <head>
   <meta charset='utf-8'>
   <title>kolja/Instant-Rocket-Fuel @ GitHub</title>
-  <link rel="stylesheet" href="./stylesheets/css/site.css">
+  <link rel="stylesheet" href="./css/site.css">
   <link rel="stylesheet" title="Solarized - Light" href="./stylesheets/css/solarized_light.css">
   <script src="highlight.pack.js"></script>
   <script>
@@ -37,21 +37,21 @@
     <pre><code class="coffee">
 	class Hundinvaders extends Game
 
-	constructor: (width, height) ->
-	  super width, height
+		constructor: (width, height) ->
+		  super width, height
           
-	  @batman = new Batman
-	  @fleet = new Fleet
+		  @batman = new Batman
+		  @fleet = new Fleet
 
-	update: ->
-	  super()
-	  @fleet.update @timer.delta
-	  @batman.update @timer.delta
+		update: ->
+		  super()
+		  @fleet.update @timer.delta
+		  @batman.update @timer.delta
 
-	render: ->
-	  super()
-	  @fleet.render @ctx
-	  @batman.render @ctx
+		render: ->
+		  super()
+		  @fleet.render @ctx
+		  @batman.render @ctx
 
 	jQuery ->
 	hundinvaders = new Hundinvaders( 1024, 768 )
@@ -87,19 +87,19 @@
     <pre><code>
 	class Hundinvaders extends Game
 
-	constructor: (width, height) ->
-	  super width, height
+		constructor: (width, height) ->
+		  super width, height
 
-	  @sceneManager = new SceneManager this, ["intro", "main", "highscore"]
-	  @sceneManager.setScene "intro"
+		  @sceneManager = new SceneManager this, ["intro", "main", "highscore"]
+		  @sceneManager.setScene "intro"
 
-	update: ->
-	  super()
-	  @sceneManager.currentScene.update @timer.delta
+		update: ->
+		  super()
+		  @sceneManager.currentScene.update @timer.delta
 
-	render: ->
-	  super()
-	  @sceneManager.currentScene.render @ctx
+		render: ->
+		  super()
+		  @sceneManager.currentScene.render @ctx
 
 	jQuery ->
 	hundinvaders = new Hundinvaders( 1024, 768 )
@@ -109,17 +109,17 @@
     <pre><code>
 	sceneclass["main"] = class SceneMain extends Scene
       
-	constructor: (@parent) ->
-	  @batman = new Batman
-	  @fleet = new Fleet
+		constructor: (@parent) ->
+		  @batman = new Batman
+		  @fleet = new Fleet
         
-	update: (delta) ->
-	  @fleet.update delta
-	  @batman.update delta
+		update: (delta) ->
+		  @fleet.update delta
+		  @batman.update delta
 
-	render: (ctx) ->
-	  @fleet.render ctx
-	  @batman.render ctx
+		render: (ctx) ->
+		  @fleet.render ctx
+		  @batman.render ctx
     </code></pre>
     
     <p>The specific code dealing with batman and the fleet of invading dogs has moved to the "main" scene. Now its easy to switch back and forth between
