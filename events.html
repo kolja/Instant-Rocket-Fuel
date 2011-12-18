@@ -3,7 +3,13 @@
 <head>
   <meta charset='utf-8'>
   <title>kolja/Instant-Rocket-Fuel @ GitHub</title>
-  <link rel="stylesheet" href="./stylesheets/css/site.css">
+  <link rel="stylesheet" href="./css/site.css">
+  <link rel="stylesheet" title="Solarized - Light" href="./css/solarized_light.css">
+  <script src="highlight.pack.js"></script>
+  <script>
+  	hljs.tabReplace = '    ';
+  	hljs.initHighlightingOnLoad();
+  </script>
 </head>
 
 <body>
@@ -11,9 +17,31 @@
 
   <div id="container">
     <h2>Events</h2>
-    <p>This is work in progess. Please come back later for actual content...</p>
-    <p>Events are a nice way to allow the Objects in your game to communicate. This page is here 
-      to give you an overview of concept, and usage of the "eventmanager" class.</p>
+    <p>Suppose, you wanted to create a "hide and seek" game.<br>
+      You have written a "wolf" class. And instantiated two bunnies, who have to hide.</p>
+    <img src="images/event1.png" alt="Hide and Seek">
+    <p>Eventually, the wolf shouts "I'm coming". Its the signal for your bunnies that they should be safely hidden or find a hiding place asap.</p>
+    <img src="images/event2.png" alt="I'm coming">
+    <p>Yet, you may find, the objects in your game are oblivious of one another. It's what they call "separation of concern": The wolf doesn't carry a list of all bunnies that joined the game
+      and the bunnies don't know about the wolf either. He can shout all he wants, the bunnies have no way of heraring him.</p>
+    <img src="images/event3.png" alt="Separation of Concern">
+      <p>So how can the bunnies be informed that the wolf is coming? Actually they <em>are</em> somewhat concerned the wolf could find them.</p>
+      <p>This is where the eventmanager comes in. You can instantiate one in your main scene, and pass it to all objects who want to either stay informed, or want to 
+        notify others about whatever is happening in your game.</p>
+        <pre><code class="coffee">
+  @eventManager = new EventManager
+        </code></pre>
+    <img src="images/event4.png" alt="The Eventmanager">
+    <p>It's not unlike a phone system. The bunny <em>subscribes to</em>, or <em>registers</em> the event "I'm coming" with its "find_hiding_place" method – and whenever the wolf triggers "I'm coming" all the bunnies who are listening will know that it's time to hide.</p>
+        <pre><code class="coffee">
+  class Bunny
+    constructor: (@eventManager) ->
+      @eventManager.register "im_coming", @hide
+      
+    hide: ->
+      # find a place to hide!
+        </code></pre>
+    <img src="images/event5.png" alt="I found you">
   </div>
 
 </body>
