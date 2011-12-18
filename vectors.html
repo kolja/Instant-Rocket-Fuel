@@ -4,7 +4,7 @@
   <meta charset='utf-8'>
   <title>kolja/Instant-Rocket-Fuel @ GitHub</title>
   <link rel="stylesheet" href="./css/site.css">
-  <link rel="stylesheet" title="Solarized - Light" href="./stylesheets/css/solarized_light.css">
+  <link rel="stylesheet" title="Solarized - Light" href="./css/solarized_light.css">
   <script src="highlight.pack.js"></script>
   <script>
   	hljs.tabReplace = '    ';
@@ -17,10 +17,55 @@
 
   <div id="container">
     <h2>Vectors</h2>
+    
+    Vectors can be seen as arrows in that they have a certain length and an orientation (they point somewhere).
+    
     <img src="images/vector1.png" alt="Vectors come in different sizes and have an orientation.">
+    
+    <p>Vectors are really useful in game programming: they can represent the games objects' speed, acceleration, location and such. 
+    Also, they can be used to calculate distances and detect collisions. So you'll be glad to hear, that Instant Rocket Fuel comes with a (2d) Vector Class.</p>
+    <p>Whenever you need a vector, you just say:</p>
+    <pre><code class="coffee">
+    @speed = new Vector( 0, 0 )
+    </code></pre>
+    
+    <p>What Vectors don't have is a location in space. If you want your Vector to sit at a certain coordinate, you need to employ another Vector to represent it.</p>
+    
     <img src="images/vector2.png" alt="Vectors don't have a fixed location in space. To add coordinates to a vector, just add another one.">
-    <img src="images/vector3.png" alt="Vectors can be added to one another">
-    <img src="images/vector4.png" alt="The size of a vector is a scalar value">
+    <br>
+    <p>Vectors can be added to one another like numbers. The sum of two (or many) vectors is itsself a vector – and like with numbers, it doesn't matter in which order you add them.</p>
+    <br>
+    <img src="images/vector4.png" alt="Vectors can be added to one another">
+    
+    You can add to Vectors like this
+    
+    <pre><code class="coffee">
+      berlinLondon = berlinParis.add parisLondon
+    </code></pre>
+    
+    <p>While it makes sense not to change the berlinParis Vektor when adding parisLondon to it but rather return a new Vector, sometimes you <em>do</em> want to change the Vector that you are working with. Consider:</p>
+    
+    <pre><code class="coffee">
+      apple.add_ gravity
+    </code></pre>    
+    
+    <p>Here, "add" has a trailing Underscore. Actually all the methods that return a Vector have such an "underscored" counterpart, that will act on the Vector itsself.<br>
+    There is also subtract and subtract_, mult and mult_, norm and norm_ and projectTo and projectTo_.</p>
+    
+    <p>To find out how long a Vector is, call</p>
+    <pre><code class="coffee">
+      vector.length()
+    </code></pre>
+    <p>Often, you may not be interested in the actual value that length() returns. Perhaps all you need to do is compare two vectors and find out which one is longer.
+    In this case, it may be sufficient to call</p>
+    <pre><code class="coffee">
+      vector.lengthSquared()
+    </code></pre>
+    <p>which skips taking the square root.</p>
+    <img src="images/vector3.png" alt="The size of a vector is a scalar value">
+    
+    <p>Go ahead and have a look at <a href="https://github.com/kolja/Instant-Rocket-Fuel/blob/master/script/lib/vector.coffee">the Vector class</a> for yourself. 
+    It's much shorter and – I dare say – easier to understand than this whole legthy explanation.</p>
   </div>
 
 </body>
