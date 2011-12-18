@@ -1,18 +1,18 @@
-# Game Boilerplate
+# Instant Rocket Fuel
 
 If you want to create a browser game with Coffeescript based on the Canvas element, you will likely need some classes like that provide a game loop, Sprites, Animation and so on.
 
-Here you will find this basic boilerplate code:
+Have a look at the documentation at <a href="http://kolja.github.com/Instant-Rocket-Fuel/">http://kolja.github.com/Instant-Rocket-Fuel/</a>.
 
 * Game
 
   To create a game, just inherit from Game and overwrite the *update* and *render* functions.
   Update and render will run in a timebased loop.
   
-* Statemanager
+* Scenemanager
 
-  You can choose to add more than one State to your game. 
-  Just put them in separate classes and add them to the Statemanager.
+  You can choose to add more than one Scene to your game. 
+  Just put them in separate classes and add them to the Scenemanager.
   
 * Sprite
 
