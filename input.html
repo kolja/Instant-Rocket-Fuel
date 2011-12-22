@@ -17,8 +17,21 @@
 
   <div id="container">
     <h2>Mouse and Keyboard Input</h2>
-    <p>This is work in progess. Please come back later for actual content...</p>
-    <p>I'll explain how to deal with Mouse and Keyboard-Input in this section.</p>
+    <p>Before long, you'll want to tell the objects in your game to move around, or interact in some way or other.</p>
+    <img src="images/input1.png" alt="You'll need keyboard or mouse input for your game.">
+
+    <p>This is quite easy to do. Somewhere in your game you instantiate a keyboard like so:</p>
+    <pre><code class="coffee">
+      @keyboard = new Keyboard
+    </code></pre>
+    <p>You have to pass the keyboard on to where it is needed, e.g. the lion tamer.</p>
+    <p>In the lion tamers' update method you can then test if a key was pressed and take action.</p>
+    <pre><code class="coffee">
+      if @keyboard.key "space"
+        @lion.jump() 
+    </code></pre>
+    <p>Perhaps it would be better for the lion tamer to trigger a "hopp" event. The lion will know what's asked of him if he is listening to it. Have a look at <a href="events.html">events</a> for more information on this approach.</p>
+    <p>To be honest, despite the headline, Instant Rocket Fuel does not have a similar mechanism for mouseevents just yet. Please check back later... </p>
   </div>
 
 </body>
