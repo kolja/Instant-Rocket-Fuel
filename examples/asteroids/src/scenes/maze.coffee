@@ -1,7 +1,7 @@
 
 sceneclass["maze"] = class SceneMaze extends Scene
   constructor: (@parent) ->
-    
+
     maze = new Sprite
       "texture": "assets/images/walls.png"
       "width": 100
@@ -30,16 +30,17 @@ sceneclass["maze"] = class SceneMaze extends Scene
       "mapfile": "assets/maze.png"
       "pattern": "cross"
       "sprite": maze
-    
+
     @spaceships = []
     for i in [0..3]
       @spaceships[i] = new Spaceship
-    
+
   update: (delta) ->
     for spaceship in @spaceships
       spaceship.update delta
-    
-  render: (ctx) -> 
+
+  render: (ctx) ->
     @background.render(ctx)
     for spaceship in @spaceships
       spaceship.render ctx
+

@@ -10,7 +10,7 @@
 class Vector
   constructor: (x = 0, y = 0) ->
     @x = x
-    @y = y  
+    @y = y
 
   clone: ->
     new Vector @x, @y
@@ -18,15 +18,15 @@ class Vector
   # Add another Vector
   add: (vec) ->
     new Vector @x + vec.x, @y + vec.y
-    
+
   add_: (vec) ->
     @x += vec.x
     @y += vec.y
-    
+
   # Subtract another Vector
   subtract: (vec) ->
     new Vector @x - vec.x, @y - vec.y
-    
+
   subtract_: (vec) ->
     @x -= vec.x
     @y -= vec.y
@@ -49,13 +49,13 @@ class Vector
 
   # returns the normalized vector (Length = 1)
   norm: (factor=1) ->
-    if ( @length() > 0 ) 
+    if ( @length() > 0 )
       return @mult factor/l
     else
       return null
-      
+
   norm_: (factor=1) ->
-    if ( @length() > 0 ) 
+    if ( @length() > 0 )
       return @mult_ factor/l
     else
       return null
@@ -90,35 +90,33 @@ class Vector
 
   # Class method: checks if two vectors are intersecting - returns intersection point
   @intersecting: (oa, a, ob, b) ->
-    
+
     c = ob.subtract oa
     b = b.mult -1
     col = []
-    
+
     col[0] = a.clone()
     col[1] = b.clone()
     col[2] = c.clone()
     l=0; m=1; n=2
-    
+
     # Multiplicator
-    
+
     mult = col[0].y / col[0].x
-    
+
     # Bring Matrix into Triangular shape
-     
+
     col[0].y = 0
-    col[1].y = col[1].y - (mult * col[1].x)    
+    col[1].y = col[1].y - (mult * col[1].x)
     col[2].y = col[2].y - (mult * col[2].x)
-    
+
     # Reverse Substitution
-    
+
     mu = col[n].y / col[m].y
     # lb = (col[n].x - (col[m].x * mu)) / col[l].x #  mu is sufficient so this doesn't need to be done
-    
+
     return ob.subtract( b.mult(mu) )
-    
+
   print: ->
     return "(#{@x}, #{@y})"
-
-
 

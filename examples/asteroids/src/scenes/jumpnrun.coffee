@@ -1,12 +1,11 @@
 
 sceneclass["jumpnrun"] = class SceneJumpNRun extends Scene
   constructor: (@parent) ->
-    
-    @hero = new Hero @parent.eventManager, @parent.keyboard
-    
+    @hero = new Hero(@parent.eventManager, @parent.keyboard)
+
     @camera = new Camera {"projection": "normal", "vpWidth": @parent.width, "vpHeight": @parent.height}
     # @camera.coor = new Vector(2500,1050)
-    
+
     jumpnrunSprite = new Sprite
       "texture": "assets/images/jumpnrun.png"
       "width": 100
@@ -30,7 +29,7 @@ sceneclass["jumpnrun"] = class SceneJumpNRun extends Scene
     # this whole function can actually be replaced by the string "sinple"
     # you can, however use it to override the Maps standard Mapfile interpretation mechanism.
     customReadFunction = ->
-      for row in [0..@map.height-1] 
+      for row in [0..@map.height-1]
         for col in [0..@map.width-1]
           type = "#{@mapData[row][col][0]}"
           green = parseInt( @mapData[row][col][1], 16 )
@@ -41,20 +40,21 @@ sceneclass["jumpnrun"] = class SceneJumpNRun extends Scene
       "mapfile": "assets/jumpnrun_map.png"
       "pattern": customReadFunction
       "sprite": jumpnrunSprite
-    
+
     @spaceships = []
     for i in [0..3]
       @spaceships[i] = new Spaceship @parent.eventManager, @parent.keyboard
-    
+
   update: (delta) ->
     @hero.update(delta, @background)
     @camera.coor = @hero.coor
     for spaceship in @spaceships
       spaceship.update delta
-    
+
   render: (ctx) ->
     @camera.apply ctx, =>
       @background.render(ctx, @camera)
       @hero.render(ctx)
       for spaceship in @spaceships
         spaceship.render ctx
+

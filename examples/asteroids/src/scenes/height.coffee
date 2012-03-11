@@ -1,7 +1,7 @@
 
 sceneclass["height"] = class SceneHeight extends Scene
   constructor: (@parent) ->
-    
+
     simple = new Sprite
       "texture": "assets/images/beach3d.png"
       "width": 107
@@ -16,9 +16,9 @@ sceneclass["height"] = class SceneHeight extends Scene
       "mapfile": "assets/minimap.png"
       "pattern": "simple"
       "sprite": simple
-    
+
   update: (delta) ->
-    
-  render: (ctx) -> 
+
+  render: (ctx) ->
     @background.render(ctx)
 

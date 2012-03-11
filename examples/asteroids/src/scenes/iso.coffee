@@ -1,10 +1,10 @@
 
 sceneclass["iso"] = class SceneIso extends Scene
   constructor: (@parent) ->
-    
+
     @camera = new Camera {"projection": "iso", "vpWidth": @parent.width, "vpHeight": @parent.height}
     # @camera.coor = new Vector(2500,1050)
-    
+
     beach3d = new Sprite
       "texture": "assets/images/beach3d.png"
       "width": 107
@@ -28,15 +28,16 @@ sceneclass["iso"] = class SceneIso extends Scene
         "00000000": 13
         "dd0000dd": 14
         "00dddd00": 15
-        
+
     @background = new Map
       "mapfile": "assets/map.png"
       "pattern": "square"
       "sprite": beach3d
-      
-      
+
+
   update: (delta) ->
-    
+
   render: (ctx) ->
     @camera.apply ctx, =>
       @background.render(ctx, @camera)
+

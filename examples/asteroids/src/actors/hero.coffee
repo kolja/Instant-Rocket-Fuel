@@ -2,7 +2,7 @@
 
 class Hero
   constructor: (@eventManager, @keyboard) ->
-    
+
     @state = "normal"
     @sprite = new Sprite
       "texture": "assets/images/test.png"
@@ -22,12 +22,12 @@ class Hero
 
     # event Manager
     @eventManager.register "touchdown", @touchdown
-  
+
   touchdown: ->
-    console.log "Hero says: Touchdown occurred" 
-  
+    console.log "Hero says: Touchdown occurred"
+
   update: (delta, map) ->
-    
+
     # apply gravity
     tileBelow = map.tileAtVector(@coor).neighbor["s"]
     # tileBelow.bb.color = "red"
@@ -36,23 +36,23 @@ class Hero
     if @bb.intersect(tileBelow.bb) and not tileBelow.isWalkable?()
       @speed.y = 0
       @state = "normal"
-    
+
     # left/right movement
     if @keyboard.key("right")
-      @speed.add_ @force 
+      @speed.add_ @force
     else if @keyboard.key("left")
-      @speed.subtract_ @force 
+      @speed.subtract_ @force
     else
       if @speed.x > 0
         @speed.subtract_ @force
       else
         @speed.add_ @force
-      
+
     # jump
     if @keyboard.key("space") and @state isnt "jumping"
       @state = "jumping"
       @speed.y = -0.7
-      
+
     @coor = @coor.add( @speed.mult delta )
     @bb.coor = @coor
 
@@ -61,10 +61,8 @@ class Hero
     ctx.translate @coor.x, @coor.y
     @sprite.render( @state, ctx )
     ctx.restore()
-    
+
     # the BoundingBox has Coordinates. A sprite doesn't. So the bounding-box is rendered outside of the save/resotore area.
     # it will take care of the propper displacement itself.
     @bb.render ctx
-
-
 
