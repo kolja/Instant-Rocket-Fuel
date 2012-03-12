@@ -21,7 +21,7 @@ classes = [
   "Vector"
 ]
 
-# Namespace where to attack classes
+# Namespace where to attach classes
 @IRF = {}
 
 # TODO: Get rid of eval(c)

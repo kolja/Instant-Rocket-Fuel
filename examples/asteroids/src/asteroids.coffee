@@ -16,7 +16,7 @@ class Asteroids extends Game
 
     #@sceneManager = new SceneManager this, ["bigbg", "jumpnrun", "iso", "maze", "height"] # Add your own Scenes or Levels
     @sceneManager = new SceneManager(this, sceneclass)
-    @sceneManager.setScene "maze"
+    @sceneManager.setScene "jumpnrun"
 
   update: ->
     super()
