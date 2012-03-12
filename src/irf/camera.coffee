@@ -1,18 +1,15 @@
-
-
 class Camera
-
   constructor: (hash) ->
     @projection = hash["projection"]
     @vpWidth = hash["vpWidth"]   # Viewport
     @vpHeight = hash["vpHeight"]
     @zoomFactor = hash["zoomFactor"] ? 1
     @coor = new Vector( 100, 100 )
-    
+
   update: (delta) ->
 
   apply: (ctx, callback) ->
-    
+
     switch @projection
       when "normal"
         ctx.save()
@@ -26,6 +23,4 @@ class Camera
         ctx.translate 200, -400
         callback()
         ctx.restore()
-    
-    
-        
+

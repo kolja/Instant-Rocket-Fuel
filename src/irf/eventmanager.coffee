@@ -1,8 +1,7 @@
-
 class EventManager
   constructor: ->
-    @eventlist = {} 
-  
+    @eventlist = {}
+
   register: (event, callback) ->
     unless @eventlist[event]?
       @eventlist[event] = []
@@ -11,3 +10,4 @@ class EventManager
   trigger: (event, origin) ->
     for callback in @eventlist[event]
       callback(origin)
+
