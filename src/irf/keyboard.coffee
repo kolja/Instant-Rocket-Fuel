@@ -1,7 +1,6 @@
-
 class Keyboard
   constructor: ->
-    @mapping = 
+    @mapping =
       8:"backspace"
       9:"tab"
       13:"return"
@@ -52,22 +51,23 @@ class Keyboard
       93:"cmd"
       188:","
       190:"."
-      
-      
-    @keyarray = [] 
+
+
+    @keyarray = []
 
     for code, name of @mapping
       @keyarray[name] = false
-      
+
     $("html").bind "keydown", (event) =>
       @keyarray[@mapping[event.which]] = true
-      
+
     $("html").bind "keyup", (event) =>
       @keyarray[@mapping[event.which]] = false
-    
-    
+
+
   key: (which) ->
     return @keyarray[which]
-    
+
   check: ->
     return @keyarray
+
