@@ -1,7 +1,5 @@
-
 sceneclass["iso"] = class SceneIso extends Scene
   constructor: (@parent) ->
-
     @camera = new Camera {"projection": "iso", "vpWidth": @parent.width, "vpHeight": @parent.height}
     # @camera.coor = new Vector(2500,1050)
 

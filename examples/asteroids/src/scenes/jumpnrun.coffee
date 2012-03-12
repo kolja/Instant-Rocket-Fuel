@@ -1,4 +1,3 @@
-
 sceneclass["jumpnrun"] = class SceneJumpNRun extends Scene
   constructor: (@parent) ->
     @hero = new Hero(@parent.eventManager, @parent.keyboard)
@@ -26,7 +25,7 @@ sceneclass["jumpnrun"] = class SceneJumpNRun extends Scene
         "aa": 10
         "bb": 11
 
-    # this whole function can actually be replaced by the string "sinple"
+    # this whole function can actually be replaced by the string "simple"
     # you can, however use it to override the Maps standard Mapfile interpretation mechanism.
     customReadFunction = ->
       for row in [0..@map.height-1]

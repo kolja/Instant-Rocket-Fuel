@@ -1,7 +1,6 @@
 
 
 class Spaceship
-
   constructor: (@eventManager, @keyboard) ->
     @state = "normal"
     @sprite = new Sprite

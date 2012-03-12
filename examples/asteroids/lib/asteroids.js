@@ -19,8 +19,8 @@
       Asteroids.__super__.constructor.call(this, width, height);
       this.eventManager = new EventManager;
       this.keyboard = new Keyboard;
-      this.sceneManager = new SceneManager(this, [SceneJumpNRun]);
-      this.sceneManager.setScene(SceneJumpNRun);
+      this.sceneManager = new SceneManager(this, sceneclass);
+      this.sceneManager.setScene("maze");
     }
     Asteroids.prototype.update = function() {
       Asteroids.__super__.update.call(this);
@@ -35,7 +35,7 @@
   })();
   jQuery(function() {
     var asteroids;
-    asteroids = new Asteroids(1024, 768);
+    asteroids = new Asteroids(800, 600);
     return asteroids.start();
   });
   Hero = (function() {
@@ -154,16 +154,16 @@
     function SceneBigBackground(parent) {
       var backgroundsprite, i;
       this.parent = parent;
-      console.log("width: " + this.parent.width + " -- height: " + this.parent.height);
       backgroundsprite = new Sprite({
         "texture": "assets/images/weltraum.jpg",
         "width": 500,
         "height": 500
       });
       this.background = new Background(backgroundsprite);
+      console.log(this.background);
       this.spaceships = [];
       for (i = 0; i <= 3; i++) {
-        this.spaceships[i] = new Spaceship;
+        this.spaceships[i] = new Spaceship(this.parent.eventManager);
       }
     }
     SceneBigBackground.prototype.update = function(delta) {
@@ -178,7 +178,10 @@
     };
     SceneBigBackground.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
+      ctx.save();
+      ctx.translate(250, 250);
       this.background.render(ctx);
+      ctx.restore();
       _ref = this.spaceships;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -210,10 +213,15 @@
         "pattern": "simple",
         "sprite": simple
       });
+      this.camera = new Camera({
+        "projection": "normal",
+        "vpWidth": this.parent.width,
+        "vpHeight": this.parent.height
+      });
     }
     SceneHeight.prototype.update = function(delta) {};
     SceneHeight.prototype.render = function(ctx) {
-      return this.background.render(ctx);
+      return this.background.render(ctx, this.camera);
     };
     return SceneHeight;
   })();
@@ -359,6 +367,11 @@
     function SceneMaze(parent) {
       var i, maze;
       this.parent = parent;
+      this.camera = new Camera({
+        "projection": "normal",
+        "vpWidth": this.parent.width,
+        "vpHeight": this.parent.height
+      });
       maze = new Sprite({
         "texture": "assets/images/walls.png",
         "width": 100,
@@ -391,7 +404,7 @@
       });
       this.spaceships = [];
       for (i = 0; i <= 3; i++) {
-        this.spaceships[i] = new Spaceship;
+        this.spaceships[i] = new Spaceship(this.parent.eventManager, this.parent.keyboard);
       }
     }
     SceneMaze.prototype.update = function(delta) {
@@ -406,7 +419,7 @@
     };
     SceneMaze.prototype.render = function(ctx) {
       var spaceship, _i, _len, _ref, _results;
-      this.background.render(ctx);
+      this.background.render(ctx, this.camera);
       _ref = this.spaceships;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
