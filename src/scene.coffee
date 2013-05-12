@@ -1,4 +1,4 @@
-class Scene
+@irf.Scene = class Scene
 
   constructor: ->
 

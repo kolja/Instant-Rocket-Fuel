@@ -3,7 +3,7 @@
 # it helps you keep track of the time that has elapsed since you last "punch()"-ed it
 
 
-class Timer
+@irf.Timer = class Timer
   constructor: ->
     @last_time = new Date().getTime()
     @delta = 0

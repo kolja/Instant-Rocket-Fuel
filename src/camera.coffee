@@ -1,4 +1,4 @@
-class Camera
+@irf.Camera = class Camera
   constructor: (hash) ->
     @projection = hash["projection"]
     @vpWidth = hash["vpWidth"]   # Viewport

@@ -1,4 +1,4 @@
-class Game
+@irf.Game = class Game
   constructor: (@width, @height) ->
     canvas = $('<canvas/>').attr({"width": @width, "height": @height})
     $("body").append(canvas)

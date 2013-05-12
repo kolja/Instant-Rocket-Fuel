@@ -1,4 +1,4 @@
-class SceneManager
+@irf.SceneManager = class SceneManager
   constructor: (@parent, scenes) ->
     @scenearray = {}
     @currentScene = null

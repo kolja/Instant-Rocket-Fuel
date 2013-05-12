@@ -4,22 +4,20 @@ fs     = require 'fs'
 {exec} = require 'child_process'
 
 libFiles  = [
-  'irf/background'
-  'irf/boundingbox'
-  'irf/camera'
-  'irf/eventmanager'
-  'irf/game'
-  'irf/helpers'
-  'irf/keyboard'
-  'irf/map'
-  'irf/scene'
-  'irf/scenemanager'
-  'irf/sprite'
-  'irf/timer'
-  'irf/vector'
+  'helpers'
+  'background'
+  'boundingbox'
+  'camera'
+  'eventmanager'
+  'game'
+  'keyboard'
+  'map'
+  'scene'
+  'scenemanager'
+  'sprite'
+  'timer'
+  'vector'
 ]
-libFiles.push 'irf' # THIS MUST BE LAST REQUIRED FILE
-
 
 task 'build', 'Build single application file from source files', ->
   files = libFiles

@@ -1,4 +1,6 @@
 
+@irf ?= {}
+
 root = this
 
 sceneclass = {}

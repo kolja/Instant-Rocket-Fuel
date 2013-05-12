@@ -1,4 +1,4 @@
-class EventManager
+@irf.EventManager = class EventManager
   constructor: ->
     @eventlist = {}
 

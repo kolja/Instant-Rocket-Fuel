@@ -1,4 +1,4 @@
-class BoundingBox
+@irf.BoundingBox = class BoundingBox
   constructor: (@coor, @dim, @color="grey") ->
     @coor ?= new Vector
     @dim ?= new Vector

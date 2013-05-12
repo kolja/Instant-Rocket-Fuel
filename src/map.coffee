@@ -1,4 +1,4 @@
-class Map
+@irf.Map = class Map
   constructor: (hash) ->
     @sprite = hash["sprite"]
     @tiles = []
@@ -87,7 +87,7 @@ class Map
     index = y * @width + x
     return @tiles[index]
 
-class Tile
+@irf.Tile = class Tile
   constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
     @neighbor = []
     @x = @col * @sprite.innerWidth + @sprite.innerWidth/2
@@ -107,5 +107,5 @@ class Tile
     @sprite.render( @type, ctx )
     ctx.restore()
 
-    @bb.render ctx
+    # @bb.render ctx
 

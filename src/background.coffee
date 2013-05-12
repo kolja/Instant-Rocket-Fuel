@@ -1,4 +1,4 @@
-class Background
+@irf.Background = class Background
   constructor: (@sprite) ->
     @sprite.addImage "background", 0
 
