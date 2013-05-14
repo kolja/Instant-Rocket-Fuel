@@ -16,7 +16,7 @@
 # sprite.render("spaceship")
 #
 
-@irf.Sprite = class Sprite
+class Sprite
   constructor: (hash) ->
     @assets = {}
     @width = hash["width"]
@@ -44,7 +44,7 @@
   render: (name, ctx) ->
     @assets[name].render(ctx) if @assets[name]?
 
-@irf.Shape = class Shape
+class Shape
   constructor: (@sprite, index) ->
     @sx = ( index * @sprite.width ) % @sprite.texWidth
     @sy = Math.floor(( index * @sprite.width ) / @sprite.texWidth) * @sprite.height
@@ -55,7 +55,7 @@
     ctx.drawImage( @sprite.texture, @sx, @sy, @sprite.width, @sprite.height, 0, 0, @sprite.width, @sprite.height )
     ctx.restore()
 
-@irf.Animation = class Animation
+class Animation
   constructor: (@sprite, params) ->
     @fps = params["fps"] ? 30
     @loop = params["loop"] ? true
@@ -90,3 +90,6 @@
     @currentFrame = 0
     @timer.punch()
 
+@irf.Sprite = Sprite
+@irf.Shape = Shape
+@irf.Animation = Animation

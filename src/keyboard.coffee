@@ -1,4 +1,4 @@
-@irf.Keyboard = class Keyboard
+class Keyboard
   constructor: ->
     @mapping =
       8:"backspace"
@@ -71,3 +71,4 @@
   check: ->
     return @keyarray
 
+@irf.Keyboard = Keyboard

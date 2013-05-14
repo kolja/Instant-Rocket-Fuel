@@ -1,4 +1,4 @@
-@irf.Camera = class Camera
+class Camera
   constructor: (hash) ->
     @projection = hash["projection"]
     @vpWidth = hash["vpWidth"]   # Viewport
@@ -24,3 +24,4 @@
         callback()
         ctx.restore()
 
+@irf.Camera = Camera

@@ -1,7 +1,8 @@
-@irf.Background = class Background
+class Background
   constructor: (@sprite) ->
     @sprite.addImage "background", 0
 
   render: (ctx) ->
     @sprite.render( "background", ctx )
 
+@irf.Background = Background

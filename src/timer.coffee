@@ -3,7 +3,7 @@
 # it helps you keep track of the time that has elapsed since you last "punch()"-ed it
 
 
-@irf.Timer = class Timer
+class Timer
   constructor: ->
     @last_time = new Date().getTime()
     @delta = 0
@@ -23,3 +23,4 @@
   fps: ->
     1000 / @delta
 
+@irf.Timer = Timer

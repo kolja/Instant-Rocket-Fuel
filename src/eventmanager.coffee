@@ -1,4 +1,4 @@
-@irf.EventManager = class EventManager
+class EventManager
   constructor: ->
     @eventlist = {}
 
@@ -11,3 +11,4 @@
     for callback in @eventlist[event]
       callback(origin)
 
+@irf.EventManager = EventManager

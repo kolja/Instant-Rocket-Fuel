@@ -1,4 +1,4 @@
-@irf.Scene = class Scene
+class Scene
 
   constructor: ->
 
@@ -6,3 +6,4 @@
 
   render: ->
 
+@irf.Scene = Scene

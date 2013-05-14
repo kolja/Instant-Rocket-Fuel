@@ -1,4 +1,4 @@
-@irf.Game = class Game
+class Game
   constructor: (@width, @height) ->
     canvas = $('<canvas/>').attr({"width": @width, "height": @height})
     $("body").append(canvas)
@@ -23,3 +23,4 @@
   render: ->
     @ctx.clearRect 0, 0, @width, @height
 
+@irf.Game = Game

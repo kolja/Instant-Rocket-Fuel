@@ -7,7 +7,7 @@
 #  The underscore at the end of a method signifies that it operates on itself
 #
 
-@irf.Vector = class Vector
+class Vector
   constructor: (x = 0, y = 0) ->
     @x = x
     @y = y
@@ -120,3 +120,4 @@
   print: ->
     return "(#{@x}, #{@y})"
 
+@irf.Vector = Vector
