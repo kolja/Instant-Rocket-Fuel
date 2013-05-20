@@ -1,8 +1,8 @@
 class Game
 
-  @addScene: (sceneName, scene) ->
+  @addScene: (scene) ->
     @sceneManager ?= new SceneManager()
-    @sceneManager.addScene sceneName, scene
+    @sceneManager.addScene scene
 
   constructor: (@width, @height) ->
     canvas = $('<canvas/>').attr({"width": @width, "height": @height})

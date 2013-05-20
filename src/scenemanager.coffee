@@ -8,8 +8,8 @@ class SceneManager
     @scenes = {}
     @currentScene = null
 
-  addScene: (sceneName, sceneClass) ->
-    @scenes[sceneName] = sceneClass
+  addScene: (sceneClass) ->
+    @scenes[sceneClass.name] = sceneClass
 
   setScene: (scene, parent) ->
     @currentScene = new @scenes[scene](parent)
