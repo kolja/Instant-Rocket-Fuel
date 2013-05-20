@@ -9,9 +9,12 @@ class SceneManager
     @currentScene = null
 
   addScene: (sceneClass) ->
-    @scenes[sceneClass.name] = sceneClass
+    @scenes[sceneClass.name] = 
+      "class"    : sceneClass
+      "instance" : null
 
   setScene: (scene, parent) ->
-    @currentScene = new @scenes[scene](parent)
+    # create an instance of the scene, unless it has been created before
+    @currentScene = @scenes[scene].instance ?= new @scenes[scene].class(parent) 
 
 @irf.SceneManager = SceneManager

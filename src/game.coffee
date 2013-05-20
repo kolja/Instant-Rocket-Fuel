@@ -4,8 +4,14 @@ class Game
     @sceneManager ?= new SceneManager()
     @sceneManager.addScene scene
 
-  constructor: (@width, @height) ->
-    canvas = $('<canvas/>').attr({"width": @width, "height": @height})
+  constructor: (params) ->
+
+    @params = Helpers.extend {
+      "width" : 800, 
+      "height": 600
+    }, params
+    
+    canvas = $('<canvas/>').attr({"width": @params.width, "height": @params.height})
     $("body").append(canvas)
     @ctx = canvas[0].getContext('2d')
     @ctx.font = '400 18px Helvetica, sans-serif'
@@ -29,6 +35,6 @@ class Game
     @timer.punch()
 
   render: ->
-    @ctx.clearRect 0, 0, @width, @height
+    @ctx.clearRect 0, 0, @params.width, @params.height
 
 @irf.Game = Game
