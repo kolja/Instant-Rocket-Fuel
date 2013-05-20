@@ -1,16 +1,17 @@
+# # The SceneManager
+# is the class to hold and manage (switch between) the 'scenes' that your
+# Game consists of. It maintains
 class SceneManager
-  constructor: (@parent, scenes) ->
-    @scenearray = {}
+  # * a hash with all Scenes in the game
+  # * a reference to the the scene that is currently active
+  constructor: ->
+    @scenes = {}
     @currentScene = null
-    for name, klass of scenes
-      @addScene(name, klass)
 
-  addScene: (name, klass) ->
-    @scenearray[name] = new klass(@parent)
-    # when a scene is added for the first time, it automatically becomes the @currentScene
-    @setScene name unless @currentScene?
+  addScene: (sceneName, sceneClass) ->
+    @scenes[sceneName] = sceneClass
 
-  setScene: (scene) ->
-    @currentScene = @scenearray[scene]
+  setScene: (scene, parent) ->
+    @currentScene = new @scenes[scene](parent)
 
 @irf.SceneManager = SceneManager
