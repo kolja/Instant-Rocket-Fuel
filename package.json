@@ -1,0 +1,26 @@
+{
+  "name": "instant-rocket-fuel",
+  "version": "0.0.1",
+  "description": "A framework for your browser-game",
+  "main": "lib/irf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kolja/Instant-Rocket-Fuel"
+  },
+  "keywords": [
+    "game",
+    "framework"
+  ],
+  "author": "Kolja Wilcke",
+  "license": "MIT",
+  "homepage": "https://github.com/kolja/Instant-Rocket-Fuel",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "browserify": "~3.20.0",
+    "grunt-browserify": "~1.3.0",
+    "coffeeify": "~0.5.2"
+  }
+}
