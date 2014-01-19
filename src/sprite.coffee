@@ -16,6 +16,9 @@
 # sprite.render("spaceship")
 #
 
+Shape = require './shape'
+Animation = require './animation'
+
 class Sprite
   constructor: (hash) ->
     @assets = {}
@@ -55,41 +58,5 @@ class Shape
     ctx.drawImage( @sprite.texture, @sx, @sy, @sprite.width, @sprite.height, 0, 0, @sprite.width, @sprite.height )
     ctx.restore()
 
-class Animation
-  constructor: (@sprite, params) ->
-    @fps = params["fps"] ? 30
-    @loop = params["loop"] ? true
-    @callback = params["callback"] ? null
-    @frames = for index in params["frames"]
-      new Shape @sprite, index
-    @lastFrame = @frames.length - 1
-    @timer = new Timer
-    @currentFrame = 0
-    @playing = true
-
-  render: (ctx) ->
-    if @playing
-      @currentFrame = Math.floor( @timer.timeSinceLastPunch() / (1000 / @fps) )
-      if @currentFrame > @lastFrame
-        @callback?()
-        if @loop
-          @rewind()
-        else
-          @currentFrame = @lastFrame
-          @stop()
-
-    @frames[@currentFrame].render(ctx)
-
-  play: ->
-    @playing = true
-
-  stop: ->
-    @playing = false
-
-  rewind: ->
-    @currentFrame = 0
-    @timer.punch()
 
 @irf.Sprite = Sprite
-@irf.Shape = Shape
-@irf.Animation = Animation

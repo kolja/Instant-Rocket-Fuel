@@ -21,6 +21,7 @@
     "grunt": "~0.4.2",
     "browserify": "~3.20.0",
     "grunt-browserify": "~1.3.0",
-    "coffeeify": "~0.5.2"
+    "coffeeify": "~0.5.2",
+    "grunt-coffee-build": "~1.4.12"
   }
 }

@@ -23,4 +23,4 @@ class Timer
   fps: ->
     1000 / @delta
 
-@irf.Timer = Timer
+module.exports = Timer

@@ -1,3 +1,5 @@
+SceneManager = require './scenemanager'
+
 class Game
 
   @addScene: (scene) ->
@@ -7,10 +9,10 @@ class Game
   constructor: (params) ->
 
     @params = Helpers.extend {
-      "width" : 800, 
+      "width" : 800,
       "height": 600
     }, params
-    
+
     canvas = $('<canvas/>').attr({"width": @params.width, "height": @params.height})
     $("body").append(canvas)
     @ctx = canvas[0].getContext('2d')
@@ -26,7 +28,7 @@ class Game
     @render()
 
   start: ->
-    @loop = setInterval @gameloop, 1 
+    @loop = setInterval @gameloop, 1
 
   stop: ->
     @loop.clearInterval()
@@ -37,4 +39,4 @@ class Game
   render: ->
     @ctx.clearRect 0, 0, @params.width, @params.height
 
-@irf.Game = Game
+module.exports = Game

@@ -1,3 +1,6 @@
+
+Tile = require './tile'
+
 class Map
   constructor: (hash) ->
     @sprite = hash["sprite"]
@@ -87,6 +90,11 @@ class Map
     index = y * @width + x
     return @tiles[index]
 
+module.exports = Map
+
+BoundingBox = require './boundingBox'
+Vector = require './vector'
+
 class Tile
   constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
     @neighbor = []
@@ -109,6 +117,5 @@ class Tile
 
     # @bb.render ctx
 
-@irf.Tile = Tile
-@irf.Map  = Map
+module.exports = Tile
 

@@ -1,3 +1,5 @@
+Vector = require './vector'
+
 class BoundingBox
   constructor: (@coor, @dim, @color="grey") ->
     @coor ?= new Vector
@@ -35,4 +37,4 @@ class BoundingBox
     ctx.strokeStyle = @color
     ctx.strokeRect @coor.x - @dim.x/2, @coor.y - @dim.y/2, @dim.x, @dim.y
 
-@irf.BoundingBox = BoundingBox 
+module.exports = BoundingBox

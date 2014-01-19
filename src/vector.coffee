@@ -120,4 +120,4 @@ class Vector
   print: ->
     return "(#{@x}, #{@y})"
 
-@irf.Vector = Vector
+module.exports = Vector

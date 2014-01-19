@@ -1,4 +1,6 @@
+
 class EventManager
+
   constructor: ->
     @eventlist = {}
 
@@ -11,4 +13,4 @@ class EventManager
     for callback in @eventlist[event]
       callback(origin)
 
-@irf.EventManager = EventManager
+module.exports = EventManager

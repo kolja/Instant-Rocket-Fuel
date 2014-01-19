@@ -6,4 +6,4 @@ class Scene
 
   render: ->
 
-@irf.Scene = Scene
+module.exports = Scene

@@ -24,4 +24,4 @@ class Camera
         callback()
         ctx.restore()
 
-@irf.Camera = Camera
+module.exports = Camera

@@ -71,4 +71,4 @@ class Keyboard
   check: ->
     return @keyarray
 
-@irf.Keyboard = Keyboard
+module.exports = Keyboard
