@@ -5,4 +5,4 @@ class Background
   render: (ctx) ->
     @sprite.render( "background", ctx )
 
-@irf.Background = Background
+module.exports = Background
