@@ -16,36 +16,36 @@
 # sprite.render("spaceship")
 #
 
-Shape = require './shape'
-Animation = require './animation'
+Shape = require 'shape'
+Animation = require 'animation'
 
 class Sprite
-  constructor: (hash) ->
-    @assets = {}
-    @width = hash["width"]
-    @height = hash["height"]
-    @texture = new Image()
-    @texture.src = hash["texture"]
-    @key = hash["key"] ? {}
+    constructor: (hash) ->
+        @assets = {}
+        @width = hash["width"]
+        @height = hash["height"]
+        @texture = new Image()
+        @texture.src = hash["texture"]
+        @key = hash["key"] ? {}
 
-    for key, i of @key
-      @addImage key, i
+        for key, i of @key
+            @addImage key, i
 
-    @innerWidth = hash["innerWidth"] ? @width
-    @innerHeight = hash["innerHeight"] ? @height
+        @innerWidth = hash["innerWidth"] ? @width
+        @innerHeight = hash["innerHeight"] ? @height
 
-  addImage: (name, index) ->
-    $(@texture).load =>
-      @texWidth = @texture.width
-      @assets[name] = new Shape this, index
+    addImage: (name, index) ->
+        $(@texture).load =>
+            @texWidth = @texture.width
+            @assets[name] = new Shape this, index
 
-  addAnimation: (name, params) ->
-    $(@texture).load =>
-      @texWidth = @texture.width
-      @assets[name] = new Animation this, params
+    addAnimation: (name, params) ->
+        $(@texture).load =>
+            @texWidth = @texture.width
+            @assets[name] = new Animation this, params
 
-  render: (name, ctx) ->
-    @assets[name].render(ctx) if @assets[name]?
+    render: (name, ctx) ->
+        @assets[name].render(ctx) if @assets[name]?
 
 
 
