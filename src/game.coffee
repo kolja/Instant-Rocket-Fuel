@@ -1,5 +1,5 @@
 
-SceneManager = require 'scenemanager'
+SceneManager = require './scenemanager.coffee'
 
 class Game
 

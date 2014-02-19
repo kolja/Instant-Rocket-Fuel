@@ -1,5 +1,5 @@
 
-Vector = require 'vector'
+Vector = require './vector.coffee'
 
 class BoundingBox
     constructor: (@coor, @dim, @color="grey") ->

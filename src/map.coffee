@@ -1,5 +1,5 @@
 
-Tile = require 'tile'
+Tile = require './tile.coffee'
 
 class Map
     constructor: (hash) ->

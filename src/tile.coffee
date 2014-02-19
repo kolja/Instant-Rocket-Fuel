@@ -1,6 +1,6 @@
 
-BoundingBox = require 'boundingBox'
-Vector = require 'vector'
+BoundingBox = require './boundingBox.coffee'
+Vector = require './vector.coffee'
 
 class Tile
     constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->

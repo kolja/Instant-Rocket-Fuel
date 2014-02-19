@@ -16,8 +16,8 @@
 # sprite.render("spaceship")
 #
 
-Shape = require 'shape'
-Animation = require 'animation'
+Shape = require './shape.coffee'
+Animation = require './animation.coffee'
 
 class Sprite
     constructor: (hash) ->
