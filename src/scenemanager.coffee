@@ -17,4 +17,4 @@ class SceneManager
         # create an instance of the scene, unless it has been created before
         @currentScene = @scenes[scene].instance ?= new @scenes[scene].class(parent)
 
-@irf.SceneManager = SceneManager
+module.exports = SceneManager

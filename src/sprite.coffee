@@ -49,4 +49,4 @@ class Sprite
 
 
 
-@irf.Sprite = Sprite
+module.exports = Sprite
