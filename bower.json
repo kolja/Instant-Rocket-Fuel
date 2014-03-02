@@ -1,0 +1,26 @@
+{
+  "name": "irf",
+  "version": "0.0.1",
+  "homepage": "http://kolja.github.io/Instant-Rocket-Fuel/",
+  "authors": [
+    "Kolja Wilcke <kolja@apfel.de>"
+  ],
+  "description": "The building blocks for your next browsergame",
+  "main": "lib/irf.min.js",
+  "keywords": [
+    "html5",
+    "browsergame",
+    "coffeescript",
+    "instant",
+    "rocket",
+    "fuel"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
