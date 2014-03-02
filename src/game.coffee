@@ -1,5 +1,7 @@
 
 SceneManager = require './scenemanager.coffee'
+Helpers = require './helpers.coffee'
+Timer = require './timer.coffee'
 
 class Game
 
@@ -14,9 +16,12 @@ class Game
             "height": 600
         }, params
 
-        canvas = $('<canvas/>').attr({"width": @params.width, "height": @params.height})
-        $("body").append(canvas)
-        @ctx = canvas[0].getContext('2d')
+        canvas = document.createElement 'canvas'
+        canvas.setAttribute "width", @params.width
+        canvas.setAttribute "height", @params.height
+        document.querySelector("body").appendChild(canvas)
+
+        @ctx = canvas.getContext('2d')
         @ctx.font = '400 18px Helvetica, sans-serif'
         @loop = null
         @timer = new Timer

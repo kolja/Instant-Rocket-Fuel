@@ -1,4 +1,6 @@
+
 class Keyboard
+
     constructor: ->
         @mapping =
             8:"backspace"
@@ -52,16 +54,18 @@ class Keyboard
             188:","
             190:"."
 
-      @keyarray = []
+        @keyarray = []
 
-      for code, name of @mapping
-          @keyarray[name] = false
+        for code, name of @mapping
+            @keyarray[name] = false
 
-      $("html").bind "keydown", (event) =>
-          @keyarray[@mapping[event.which]] = true
+        rootElement = document.querySelector 'html'
 
-      $("html").bind "keyup", (event) =>
-          @keyarray[@mapping[event.which]] = false
+        rootElement.addEventListener "keydown", (event) =>
+            @keyarray[@mapping[event.which]] = true
+
+        rootElement.addEventListener "keyup", (event) =>
+            @keyarray[@mapping[event.which]] = false
 
 
     key: (which) ->

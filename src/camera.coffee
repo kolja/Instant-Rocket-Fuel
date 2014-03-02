@@ -1,4 +1,6 @@
 
+Vector = require './vector.coffee'
+
 class Camera
     constructor: (hash) ->
         @projection = hash["projection"]
