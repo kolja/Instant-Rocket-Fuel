@@ -1,7 +1,6 @@
 
 SceneManager = require './scenemanager.coffee'
 Helpers = require './helpers.coffee'
-Timer = require './timer.coffee'
 
 class Game
 
@@ -24,27 +23,29 @@ class Game
         @ctx = canvas.getContext('2d')
         @ctx.font = '400 18px Helvetica, sans-serif'
 
-        # TODO: remove Timer as necessary ingredient. Use the timestamp parameter to requestAnimationFrame instead.
-        @timer = new Timer
-
         # the instance's scenemanager points to the Classes Scenemanager
         # (or, if it doesn't exist, a newly instantiated one)
         @sceneManager = @constructor.sceneManager || new SceneManager()
 
     gameloop: (timestamp) =>
-        @update()
+        @delta = timestamp - @lasttime
+        @lasttime = timestamp
+
+        @update @delta
         @render()
-        @loopID = window.requestAnimationFrame @gameloop if @loopID
+
+        @loopID = requestAnimationFrame @gameloop if @loopID
 
     start: ->
-        @loopID = window.requestAnimationFrame @gameloop
+        @lasttime = performance.now() # more accurate than Date().getTime()
+        @loopID = requestAnimationFrame @gameloop
 
     stop: ->
         cancelAnimationFrame @loopID
         @loopID = undefined
 
-    update: ->
-        @timer.punch()
+    update: (timestamp) ->
+        # override in the game
 
     render: ->
         @ctx.clearRect 0, 0, @params.width, @params.height

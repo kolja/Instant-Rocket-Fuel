@@ -35,9 +35,8 @@ class Map
 
     renderDistance: (camera) ->
         return @rd if @rd? # cache the render Distance
-        @rd = (Math.pow(camera.vpWidth,2) + Math.pow(camera.vpHeight,2))/4
+        @rd = (Math.pow(camera.vpWidth+20,2) + Math.pow(camera.vpHeight+20,2))/4
 
-    # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
     # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
     loadMapDataFromImage: ->
         $(@map).load =>

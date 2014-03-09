@@ -2,7 +2,6 @@
 # A simple Timer:
 # it helps you keep track of the time that has elapsed since you last "punch()"-ed it
 
-
 class Timer
     constructor: ->
         @last_time = new Date().getTime()
