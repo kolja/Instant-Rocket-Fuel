@@ -7,6 +7,7 @@ class BoundingBox
         @dim ?= new Vector
 
     intersect: (otherBB) ->
+        if not otherBB? then return false
         @intersectv(otherBB) and @intersecth(otherBB)
 
     intersectv: (otherBB) ->

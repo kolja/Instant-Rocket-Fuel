@@ -23,21 +23,25 @@ class Game
 
         @ctx = canvas.getContext('2d')
         @ctx.font = '400 18px Helvetica, sans-serif'
-        @loop = null
+
+        # TODO: remove Timer as necessary ingredient. Use the timestamp parameter to requestAnimationFrame instead.
         @timer = new Timer
+
         # the instance's scenemanager points to the Classes Scenemanager
         # (or, if it doesn't exist, a newly instantiated one)
         @sceneManager = @constructor.sceneManager || new SceneManager()
 
-    gameloop: =>
+    gameloop: (timestamp) =>
         @update()
         @render()
+        @loopID = window.requestAnimationFrame @gameloop if @loopID
 
     start: ->
-        @loop = setInterval @gameloop, 1
+        @loopID = window.requestAnimationFrame @gameloop
 
     stop: ->
-        @loop.clearInterval()
+        cancelAnimationFrame @loopID
+        @loopID = undefined
 
     update: ->
         @timer.punch()

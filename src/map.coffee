@@ -7,6 +7,7 @@ class Map
         @tiles = []
         @width = 0 # width and height of the map in tiles - can only be determined after the mapfile loading has completed
         @height = 0
+        @rd = null # renderDistance
 
         # in hash["pattern"] you can either pass a string like "simple", "square" or "cross"
         # in which case the respective method will be called. Alternatively, you can pass your own custom function.
@@ -29,8 +30,12 @@ class Map
 
     render: (ctx, camera) ->
         for tile in @tiles
-            if tile.squaredDistanceTo(camera.coor) < 100000
+            if tile.squaredDistanceTo(camera.coor) < @renderDistance camera
                 tile.render(ctx)
+
+    renderDistance: (camera) ->
+        return @rd if @rd? # cache the render Distance
+        @rd = (Math.pow(camera.vpWidth,2) + Math.pow(camera.vpHeight,2))/4
 
     # http://stackoverflow.com/questions/3102819/chrome-disable-same-origin-policy
     # http://stackoverflow.com/questions/934012/get-image-data-in-javascript
