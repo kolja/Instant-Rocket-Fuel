@@ -1,14 +1,14 @@
 class EventManager
-    constructor: ->
-        @eventlist = {}
+  constructor: ->
+    @eventlist = {}
 
-    register: (event, callback) ->
-        unless @eventlist[event]?
-            @eventlist[event] = []
-        @eventlist[event].push callback
+  register: (event, callback) ->
+    unless @eventlist[event]?
+      @eventlist[event] = []
+    @eventlist[event].push callback
 
-    trigger: (event, origin) ->
-        for callback in @eventlist[event]
-            callback(origin)
+  trigger: (event, origin) ->
+    for callback in @eventlist[event]
+      callback(origin)
 
 @irf.EventManager = EventManager
