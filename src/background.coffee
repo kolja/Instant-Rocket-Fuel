@@ -1,8 +1,8 @@
 class Background
-  constructor: (@sprite) ->
-    @sprite.addImage "background", 0
+    constructor: (@sprite) ->
+        @sprite.addImage "background", 0
 
-  render: (ctx) ->
-    @sprite.render( "background", ctx )
+    render: (ctx) ->
+        @sprite.render( "background", ctx )
 
-@irf.Background = Background
+module.exports = Background

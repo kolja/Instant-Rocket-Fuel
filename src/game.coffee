@@ -1,40 +1,53 @@
+
+SceneManager = require './scenemanager.coffee'
+Helpers = require './helpers.coffee'
+
 class Game
 
-  @addScene: (scene) ->
-    @sceneManager ?= new SceneManager()
-    @sceneManager.addScene scene
+    @addScene: (scene) ->
+        @sceneManager ?= new SceneManager()
+        @sceneManager.addScene scene
 
-  constructor: (params) ->
+    constructor: (params) ->
 
-    @params = Helpers.extend {
-      "width" : 800, 
-      "height": 600
-    }, params
-    
-    canvas = $('<canvas/>').attr({"width": @params.width, "height": @params.height})
-    $("body").append(canvas)
-    @ctx = canvas[0].getContext('2d')
-    @ctx.font = '400 18px Helvetica, sans-serif'
-    @loop = null
-    @timer = new Timer
-    # the instance's scenemanager points to the Classes Scenemanager
-    # (or, if it doesn't exist, a newly instantiated one)
-    @sceneManager = @constructor.sceneManager || new SceneManager()
+        @params = Helpers.extend {
+            "width" : 800,
+            "height": 600
+        }, params
 
-  gameloop: =>
-    @update()
-    @render()
+        canvas = document.createElement 'canvas'
+        canvas.setAttribute "width", @params.width
+        canvas.setAttribute "height", @params.height
+        document.querySelector("body").appendChild(canvas)
 
-  start: ->
-    @loop = setInterval @gameloop, 1 
+        @ctx = canvas.getContext('2d')
+        @ctx.font = '400 18px Helvetica, sans-serif'
 
-  stop: ->
-    @loop.clearInterval()
+        # the instance's scenemanager points to the Classes Scenemanager
+        # (or, if it doesn't exist, a newly instantiated one)
+        @sceneManager = @constructor.sceneManager || new SceneManager()
 
-  update: ->
-    @timer.punch()
+    gameloop: (timestamp) =>
+        @delta = timestamp - @lasttime
+        @lasttime = timestamp
 
-  render: ->
-    @ctx.clearRect 0, 0, @params.width, @params.height
+        @update @delta
+        @render()
 
-@irf.Game = Game
+        @loopID = requestAnimationFrame @gameloop if @loopID
+
+    start: ->
+        @lasttime = performance.now() # more accurate than Date().getTime()
+        @loopID = requestAnimationFrame @gameloop
+
+    stop: ->
+        cancelAnimationFrame @loopID
+        @loopID = undefined
+
+    update: (timestamp) ->
+        # override in the game
+
+    render: ->
+        @ctx.clearRect 0, 0, @params.width, @params.height
+
+module.exports = Game
