@@ -23,7 +23,7 @@ class Camera
                 ctx.save()
                 ctx.scale 1, 0.5
                 ctx.rotate Math.PI/4
-                ctx.translate 200, -400
+                ctx.translate @vpWidth/2 - @coor.x, @vpHeight/2 - @coor.y
                 callback()
                 ctx.restore()
 

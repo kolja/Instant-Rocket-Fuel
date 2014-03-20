@@ -3,6 +3,7 @@ class EventManager
 
     constructor: ->
         @eventlist = {}
+        @on = @register # alias
 
     register: (event, callback) ->
         unless @eventlist[event]?
