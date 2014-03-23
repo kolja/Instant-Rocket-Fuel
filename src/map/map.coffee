@@ -2,14 +2,16 @@
 DataSource = require './datasource.coffee'
 ReadStrategy = require './readstrategy.coffee'
 MovementRules = require './movementrules.coffee'
+PlacementStrategy = require './placementstrategy.coffee'
 
 class Map
-    constructor: ({@sprite, @read, @pattern, @movement, @mapFile, @ed}) ->
+    constructor: ({@sprite, @read, @pattern, @movement, @tilePlacement, @mapFile, @ed}) ->
 
         # defaults:
         @read ?= "image" # read Map Data from an image, from a file or from a literal object
         @pattern ?= "simple" # how should the mapData be interpreted?
         @movement ?= "northSouthEastWest" # what are the neighbors of an individual tile?
+        @tilePlacement ?= "grid" # how are the tiles to be translated before rendering?
 
         @width = 0 # width and height of the map in tiles - can only be determined after the mapfile loading has completed
         @height = 0
@@ -21,9 +23,11 @@ class Map
             callback: @parseToTiles
         ).read()
 
+        @tilePlacementStrategy = new PlacementStrategy @tilePlacement, this
+
     parseToTiles: (mapData) =>
         {@width, @height} = mapData
-        @tiles = (new ReadStrategy @pattern).read mapData, @sprite
+        @tiles = (new ReadStrategy @pattern,this).read mapData, @sprite
         (new MovementRules @movement).applyRules this
         @ed?.trigger "map.finishedLoading"
 
@@ -32,15 +36,12 @@ class Map
         @rd = (Math.pow(camera.vpWidth+20,2) + Math.pow(camera.vpHeight+20,2))/4
 
     tileAtVector: (vec) ->
-        x = Math.floor( vec.x / @sprite.innerWidth )
-        y = Math.floor( vec.y / @sprite.innerHeight )
-        index = y * @width + x
-        return @tiles[index]
+        @tiles[@tilePlacementStrategy.tileIndex(vec)]
 
     render: (ctx, camera) ->
         for tile in @tiles
-            if tile.squaredDistanceTo(camera.coor) < @renderDistance camera
-                tile.render(ctx)
+            #if tile.squaredDistanceTo(camera.coor) < @renderDistance camera
+            tile.render(ctx)
 
 module.exports = Map
 

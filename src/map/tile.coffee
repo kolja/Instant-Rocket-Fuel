@@ -1,24 +1,18 @@
 
-BoundingBox = require '../boundingBox.coffee'
+BoundingBox = require '../boundingbox.coffee'
 Vector = require '../vector.coffee'
 
 class Tile
-    constructor: (@sprite, @type, @row, @col, @green=0, @z=0) ->
+    constructor: ({@sprite, @data, @map}) ->
         @neighbor = []
-        @x = @col * @sprite.innerWidth + @sprite.innerWidth/2
-        @y = @row * @sprite.innerHeight + @sprite.innerHeight/2
+        {@x,@y} = @map.tilePlacementStrategy.coor(@data)
         @bb = new BoundingBox new Vector( @x, @y ), new Vector( @sprite.innerWidth, @sprite.innerHeight )
+        @isWalkable = true unless @data.walkable > 0
 
-    isWalkable: ->
-        @green is 0
-
-    squaredDistanceTo: (vec) ->
-        vec.subtract( new Vector(@x,@y) ).lengthSquared() # maybe add a distance (class-)method to vector?
-
-    render: (ctx) ->
+    render: (ctx) =>
         ctx.save()
-        ctx.translate @x - @z, @y - @z
-        @sprite.render( @type, ctx )
+        ctx.translate @x, @y
+        @sprite.render( @data.type, ctx )
         ctx.restore()
 
 module.exports = Tile

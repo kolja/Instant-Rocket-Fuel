@@ -43,7 +43,9 @@ class DataSource
 
     readLiteral: ->
         @mapData = @file
-        @callback @mapData
+        setTimeout =>
+            @callback @mapData
+        ,100
 
 module.exports = DataSource
 
