@@ -35,12 +35,12 @@ class Sprite
         @innerHeight = hash["innerHeight"] ? @height
 
     addImage: (name, index) ->
-        $(@texture).load =>
+        @texture.onload = =>
             @texWidth = @texture.width
             @assets[name] = new Shape this, index
 
     addAnimation: (name, params) ->
-        $(@texture).load =>
+        @texture.onload = =>
             @texWidth = @texture.width
             @assets[name] = new Animation this, params
 
