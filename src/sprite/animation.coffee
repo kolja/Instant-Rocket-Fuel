@@ -1,6 +1,6 @@
 
 Shape = require './shape.coffee'
-Timer = require './timer.coffee'
+Timer = require '../timer.coffee'
 
 class Animation
 
