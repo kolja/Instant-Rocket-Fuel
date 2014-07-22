@@ -27,6 +27,7 @@ class Sprite
         @texture = new Image()
         @texture.src = hash["texture"]
         @key = hash["key"] ? {}
+        @onLoadCalls = []
 
         for key, i of @key
             @addImage key, i
@@ -34,13 +35,17 @@ class Sprite
         @innerWidth = hash["innerWidth"] ? @width
         @innerHeight = hash["innerHeight"] ? @height
 
-    addImage: (name, index) ->
         @texture.onload = =>
+            for fn in @onLoadCalls
+                fn.call(this)
+
+    addImage: (name, index) ->
+        @onLoadCalls.push =>
             @texWidth = @texture.width
             @assets[name] = new Shape this, index
 
     addAnimation: (name, params) ->
-        @texture.onload = =>
+        @onLoadCalls.push =>
             @texWidth = @texture.width
             @assets[name] = new Animation this, params
 

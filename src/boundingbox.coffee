@@ -34,6 +34,11 @@ class BoundingBox
             else
                 return true
 
+    topside: ->
+        return @coor.y - (@dim.y / 2)
+
+    bottomside: ->
+        return @coor.y + (@dim.y / 2)
 
     render: (ctx) ->
         ctx.strokeStyle = @color
