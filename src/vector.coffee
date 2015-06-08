@@ -12,6 +12,10 @@ class Vector
         @x = x
         @y = y
 
+    set: (x, y) ->
+        @x = x
+        @y = y
+
     clone: ->
         new Vector @x, @y
 
@@ -38,6 +42,14 @@ class Vector
     mult_: (num) ->
         @x *= num
         @y *= num
+
+    # divide the vector with a Number
+    div: (num) ->
+        new Vector @x / num, @y / num
+
+    div_: (num) ->
+        @x /= num
+        @y /= num
 
     # returns the length of the vector (Betrag)
     length: ->

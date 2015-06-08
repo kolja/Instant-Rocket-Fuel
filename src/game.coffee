@@ -15,10 +15,14 @@ class Game
             "height": 600
         }, params
 
-        canvas = document.createElement 'canvas'
+        if @params.canvas
+          canvas = @params.canvas
+        else
+          canvas = document.createElement 'canvas'
+          document.querySelector("body").appendChild(canvas)
+
         canvas.setAttribute "width", @params.width
         canvas.setAttribute "height", @params.height
-        document.querySelector("body").appendChild(canvas)
 
         @ctx = canvas.getContext('2d')
         @ctx.font = '400 18px Helvetica, sans-serif'
