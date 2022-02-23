@@ -2,7 +2,7 @@
 
 If you want to create a browser game with Coffeescript based on the Canvas element, you will likely need some classes like that provide a game loop, Sprites, Animation and so on.
 
-Have a look at the documentation at <a href="http://kolja.github.com/Instant-Rocket-Fuel/">http://kolja.github.com/Instant-Rocket-Fuel/</a>.
+Have a look at the documentation at <a href="http://kolja.github.io/Instant-Rocket-Fuel/">http://kolja.github.com/Instant-Rocket-Fuel/</a>.
 
 * Game
 
